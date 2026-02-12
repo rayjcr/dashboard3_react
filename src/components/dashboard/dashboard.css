@@ -1,0 +1,200 @@
+/* Dashboard Page Styles */
+.dashboard-page {
+  padding: 4px;
+}
+
+/* Dashboard Tabs Styles - Underline style with icons */
+.dashboard-page .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+  padding: 8px 16px;
+  margin: 0 4px 0 0;
+  transition: all 0.3s ease;
+}
+
+.dashboard-page .ant-tabs > .ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-btn {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-page
+  .ant-tabs
+  > .ant-tabs-nav
+  .ant-tabs-tab:hover
+  .ant-tabs-tab-btn {
+  color: var(--primary-color);
+}
+
+.dashboard-page
+  .ant-tabs
+  > .ant-tabs-nav
+  .ant-tabs-tab-active
+  .ant-tabs-tab-btn {
+  color: var(--primary-color) !important;
+  font-weight: 600;
+}
+
+/* Active tab underline */
+.dashboard-page .ant-tabs-ink-bar {
+  background-color: var(--primary-color) !important;
+  height: 3px !important;
+}
+
+.dashboard-page .ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
+
+.dashboard-page .ant-tabs-nav::before {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+/* Tab Content Padding */
+.dashboard-page .ant-tabs-content {
+  padding: 12px 0 0 0;
+}
+
+/* Dashboard Table Styles - Light Theme */
+.dashboard-table {
+  width: 100%;
+}
+
+.dashboard-table .ant-table-thead > tr > th {
+  background-color: #f0f0f0 !important;
+  font-weight: 600;
+  white-space: nowrap;
+  border-right: 1px solid #d9d9d9 !important;
+  border-bottom: 2px solid #d9d9d9 !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-size: 12px !important;
+}
+
+.dashboard-table .ant-table-thead > tr > th:last-child {
+  border-right: none !important;
+}
+
+.dashboard-table .ant-table-tbody > tr > td {
+  white-space: normal;
+  word-break: break-all;
+  border-right: 1px solid #f0f0f0 !important;
+  font-size: 12px !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.dashboard-table .ant-table-tbody > tr > td:last-child {
+  border-right: none !important;
+}
+
+/* 斑马纹效果 */
+.dashboard-table .ant-table-tbody > tr:nth-child(odd) > td {
+  background-color: #ffffff !important;
+}
+
+.dashboard-table .ant-table-tbody > tr:nth-child(even) > td {
+  background-color: #fafafa !important;
+}
+
+/* 行悬停效果 - 使用 CSS 变量跟随主题 */
+.dashboard-table .ant-table-tbody > tr:hover > td {
+  background-color: var(--primary-color-light) !important;
+}
+
+/* Mobile responsive styles */
+@media screen and (max-width: 768px) {
+  .dashboard-page {
+    padding: 2px;
+  }
+
+  /* Tablet Tab styles */
+  .dashboard-page .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-right: 2px;
+    line-height: 1.5;
+  }
+
+  .dashboard-page
+    .ant-tabs-card
+    > .ant-tabs-nav
+    .ant-tabs-tab
+    .ant-tabs-tab-btn {
+    line-height: 1.5;
+  }
+
+  .dashboard-page .ant-tabs-content {
+    padding: 10px 0 0 0;
+  }
+
+  .dashboard-table .ant-table-thead > tr > th,
+  .dashboard-table .ant-table-tbody > tr > td {
+    padding: 8px 6px !important;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .dashboard-page {
+    padding: 0;
+  }
+
+  /* Mobile Tab styles */
+  .dashboard-page .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    margin-right: 2px;
+    border-radius: 3px 3px 0 0;
+    min-height: 28px;
+  }
+
+  .dashboard-page
+    .ant-tabs-card
+    > .ant-tabs-nav
+    .ant-tabs-tab
+    .ant-tabs-tab-btn {
+    font-size: 11px !important;
+  }
+
+  .dashboard-page .ant-tabs-content {
+    padding: 8px 0 0 0;
+  }
+
+  .dashboard-table .ant-table-thead > tr > th,
+  .dashboard-table .ant-table-tbody > tr > td {
+    padding: 6px 4px !important;
+    font-size: 11px;
+  }
+}
+
+/* Date Filter Styles */
+.date-filter-container {
+  background-color: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.date-filter-content {
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 480px) {
+  .date-filter-container {
+    padding: 8px 12px;
+    margin-bottom: 12px;
+  }
+
+  .date-filter-container .ant-picker {
+    width: 120px !important;
+  }
+
+  .date-filter-container .ant-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .date-filter-container .ant-typography {
+    font-size: 12px !important;
+  }
+}

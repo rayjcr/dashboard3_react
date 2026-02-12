@@ -1,0 +1,266 @@
+/* Theme Styles - Sidebar Dark Mode Only */
+
+/* CSS Variables for theme colors */
+:root {
+  --primary-color: #1890ff;
+  --primary-color-light: #e6f4ff;
+}
+
+[data-theme='dark'] {
+  --primary-color: #7c3aed;
+  --primary-color-light: #f3e8ff;
+}
+
+/* Sidebar scrollbar - hide horizontal, style vertical */
+.sidebar-content {
+  overflow-x: hidden !important;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 4px;
+  height: 0;
+}
+
+/* Dark theme sidebar scrollbar */
+[data-theme='dark'] .sidebar-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+[data-theme='dark'] .sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+[data-theme='dark'] .sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Light theme sidebar scrollbar */
+[data-theme='light'] .sidebar-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+[data-theme='light'] .sidebar-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+[data-theme='light'] .sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Dark theme sidebar menu styles */
+[data-theme='dark'] .ant-menu-dark,
+[data-theme='dark'] .ant-menu-dark .ant-menu-sub {
+  background: transparent !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-item {
+  color: rgba(255, 255, 255, 0.65) !important;
+  margin: 4px 12px !important;
+  border-radius: 8px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+}
+
+/* Dark theme collapsed menu - override margin for centering */
+[data-theme='dark'] .ant-menu-dark.ant-menu-inline-collapsed .ant-menu-item {
+  margin: 4px auto !important;
+  width: calc(100% - 16px) !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-item:hover {
+  background: rgba(124, 58, 237, 0.15) !important;
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-item-selected,
+[data-theme='dark'] .ant-menu-dark .ant-menu-item.ant-menu-item-selected {
+  background: #7c3aed !important;
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-item-selected::after {
+  display: none !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-submenu-title {
+  color: rgba(255, 255, 255, 0.65) !important;
+  margin: 4px 12px !important;
+  border-radius: 8px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+}
+
+/* Dark theme collapsed submenu - override margin for centering */
+[data-theme='dark']
+  .ant-menu-dark.ant-menu-inline-collapsed
+  .ant-menu-submenu-title {
+  margin: 4px auto !important;
+  width: calc(100% - 16px) !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-submenu-title:hover {
+  background: rgba(124, 58, 237, 0.15) !important;
+  color: #ffffff !important;
+}
+
+[data-theme='dark']
+  .ant-menu-dark
+  .ant-menu-submenu-selected
+  > .ant-menu-submenu-title {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .ant-menu-dark .ant-menu-submenu-arrow {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+[data-theme='dark']
+  .ant-menu-dark
+  .ant-menu-submenu-title:hover
+  .ant-menu-submenu-arrow {
+  color: #ffffff !important;
+}
+
+/* Dark theme sidebar icons */
+[data-theme='dark'] .ant-menu-dark .ant-menu-item .anticon,
+[data-theme='dark'] .ant-menu-dark .ant-menu-submenu-title .anticon {
+  color: inherit !important;
+  font-size: 18px !important;
+}
+
+/* Dark theme sidebar divider */
+[data-theme='dark'] .sidebar-content .ant-divider {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Collapsed menu - center icons */
+.ant-menu-inline-collapsed .ant-menu-item,
+.ant-menu-inline-collapsed .ant-menu-submenu-title {
+  padding: 0 !important;
+  padding-inline: 0 !important;
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-inline: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.ant-menu-inline-collapsed .ant-menu-item .anticon,
+.ant-menu-inline-collapsed .ant-menu-submenu-title .anticon {
+  margin: 0 !important;
+  margin-inline: 0 !important;
+  font-size: 20px !important;
+  display: inline-flex !important;
+  min-width: 20px !important;
+  line-height: 1 !important;
+}
+
+/* Hide text labels in collapsed state but keep icons visible */
+.ant-menu-inline-collapsed .ant-menu-item span:not(.anticon),
+.ant-menu-inline-collapsed
+  .ant-menu-submenu-title
+  span:not(.anticon):not(.ant-menu-submenu-arrow) {
+  display: none !important;
+}
+
+/* Dark theme collapsed menu icons - ensure visible */
+[data-theme='dark'] .ant-menu-inline-collapsed .ant-menu-item .anticon,
+[data-theme='dark']
+  .ant-menu-inline-collapsed
+  .ant-menu-submenu-title
+  .anticon {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+[data-theme='dark']
+  .ant-menu-inline-collapsed
+  .ant-menu-item-selected
+  .anticon {
+  color: #ffffff !important;
+}
+
+/* Light theme collapsed menu icons */
+[data-theme='light'] .ant-menu-inline-collapsed .ant-menu-item .anticon,
+[data-theme='light']
+  .ant-menu-inline-collapsed
+  .ant-menu-submenu-title
+  .anticon {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+[data-theme='light']
+  .ant-menu-inline-collapsed
+  .ant-menu-item-selected
+  .anticon {
+  color: #1890ff !important;
+}
+
+/* Light theme sidebar menu styles */
+[data-theme='light'] .ant-menu-light .ant-menu-item {
+  margin: 4px 8px !important;
+  border-radius: 6px !important;
+}
+
+/* Light theme collapsed menu - override margin for centering */
+[data-theme='light'] .ant-menu-light.ant-menu-inline-collapsed .ant-menu-item {
+  margin: 4px auto !important;
+  width: calc(100% - 16px) !important;
+}
+
+[data-theme='light'] .ant-menu-light .ant-menu-item:hover {
+  background: #e6f7ff !important;
+}
+
+[data-theme='light'] .ant-menu-light .ant-menu-item-selected {
+  background: #e6f7ff !important;
+  color: #1890ff !important;
+}
+
+[data-theme='light'] .ant-menu-light .ant-menu-item-selected::after {
+  display: none !important;
+}
+
+[data-theme='light'] .ant-menu-light .ant-menu-submenu-title {
+  margin: 4px 8px !important;
+  border-radius: 6px !important;
+}
+
+/* Light theme collapsed submenu - override margin for centering */
+[data-theme='light']
+  .ant-menu-light.ant-menu-inline-collapsed
+  .ant-menu-submenu-title {
+  margin: 4px auto !important;
+  width: calc(100% - 16px) !important;
+}
+
+[data-theme='light'] .ant-menu-light .ant-menu-submenu-title:hover {
+  background: #e6f7ff !important;
+}
+
+/* Global scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
