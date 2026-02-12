@@ -1288,8 +1288,8 @@ export const DetailReportPage: React.FC = () => {
                 data.status === 'PENDING'
                   ? 'orange'
                   : data.status === 'paid'
-                  ? 'green'
-                  : 'blue'
+                    ? 'green'
+                    : 'blue'
               }
             >
               {data.status || 'N/A'}

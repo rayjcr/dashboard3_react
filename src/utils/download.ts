@@ -410,7 +410,7 @@ export const generateDetailReportCSV = (
       key: keyof import('@/types/dashboard').TransactionInfoSub,
     ): number | string => {
       const sub = info.subs?.find((s) => s.vendor === vendor);
-      return sub ? sub[key] ?? 0 : 0;
+      return sub ? (sub[key] ?? 0) : 0;
     };
 
     // Data rows
