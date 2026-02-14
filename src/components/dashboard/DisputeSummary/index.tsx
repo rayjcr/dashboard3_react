@@ -447,6 +447,7 @@ export const DisputeSummary: React.FC = () => {
         onPageChange={handlePageChange}
         onPageSizeChange={handlePageSizeChange}
         onEvidenceSubmitted={handleEvidenceSubmitted}
+        message={message}
       />
       <DownloadButtons
         hasData={Boolean(disputeData?.transactions?.length)}

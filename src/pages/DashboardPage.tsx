@@ -1201,7 +1201,7 @@ export const DashboardPage: React.FC = () => {
               onTabClick={handleTabChange}
               size="middle"
               tabBarStyle={{ marginBottom: 16 }}
-              destroyInactiveTabPane={true}
+              destroyOnHidden={true}
             />
           </Card>
         </Space>
