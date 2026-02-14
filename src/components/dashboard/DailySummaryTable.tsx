@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, Typography, Alert, Empty } from 'antd';
+import { Table, Typography, Alert, Empty, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   SummaryResponse,
@@ -18,6 +18,22 @@ import { useAuthStore, useThemeStore } from '@/stores';
 import './dashboard.css';
 
 const { Link, Text } = Typography;
+
+// Status color mapping
+const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  Settled: { bg: '#d4edda', text: '#155724' },
+  Pending: { bg: '#fff3cd', text: '#856404' },
+  Processing: { bg: '#cce5ff', text: '#004085' },
+  Failed: { bg: '#f8d7da', text: '#721c24' },
+  Cancelled: { bg: '#e2e3e5', text: '#383d41' },
+  default: { bg: '#f0f0f0', text: '#666666' },
+};
+
+// Get amount color based on value
+const getAmountColor = (value: number): string => {
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
 
 interface DailySummaryTableProps {
   data: SummaryResponse | null;
@@ -96,7 +112,11 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
   }, [data, merchantId]);
 
   // Convert transactions to table rows
-  const tableData: DailySummaryTableRow[] = useMemo(() => {
+  const tableData: (DailySummaryTableRow & {
+    grossRaw: number;
+    netRaw: number;
+    payoutRaw: number;
+  })[] = useMemo(() => {
     if (!data?.transactions) return [];
 
     return data.transactions.map((record, index) => ({
@@ -107,6 +127,9 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
       gross: formatCurrency(record.gross, record.currency),
       net: formatCurrency(record.net, record.currency),
       payout: formatCurrency(record.payout, record.currency),
+      grossRaw: record.gross,
+      netRaw: record.net,
+      payoutRaw: record.payout,
       status: getStatusDisplay(
         record.status,
         record.settle_date,
@@ -156,12 +179,26 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
         dataIndex: 'gross',
         key: 'gross',
         align: 'left',
+        render: (text: string, record) => (
+          <span
+            style={{ color: getAmountColor(record.grossRaw), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Net',
         dataIndex: 'net',
         key: 'net',
         align: 'left',
+        render: (text: string, record) => (
+          <span
+            style={{ color: getAmountColor(record.netRaw), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
     ];
 
@@ -172,6 +209,13 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
         dataIndex: 'payout',
         key: 'payout',
         align: 'left',
+        render: (text: string, record) => (
+          <span
+            style={{ color: getAmountColor(record.payoutRaw), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       });
     }
 
@@ -182,12 +226,57 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
         dataIndex: 'status',
         key: 'status',
         align: 'left',
+        render: (text: string) => {
+          const statusKey = text?.split(' ')[0] || 'default';
+          const colors = STATUS_COLORS[statusKey] || STATUS_COLORS.default;
+          return (
+            <Tag
+              style={{
+                backgroundColor: colors.bg,
+                color: colors.text,
+                border: 'none',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                fontWeight: 500,
+              }}
+            >
+              {text}
+            </Tag>
+          );
+        },
       },
       {
         title: 'Payment Methods',
         dataIndex: 'paymentMethods',
         key: 'paymentMethods',
         align: 'left',
+        render: (text: string) => {
+          if (!text) return '-';
+          const methods = text
+            .split(',')
+            .map((m) => m.trim())
+            .filter(Boolean);
+          return (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {methods.map((method, index) => (
+                <Tag
+                  key={index}
+                  style={{
+                    backgroundColor: '#f0f0f0',
+                    color: '#666666',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '2px 8px',
+                    margin: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  {method}
+                </Tag>
+              ))}
+            </div>
+          );
+        },
       },
     );
 

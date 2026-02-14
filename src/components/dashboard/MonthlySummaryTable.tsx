@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, Typography, Alert, Empty } from 'antd';
+import { Table, Typography, Alert, Empty, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   SummaryResponse,
@@ -13,6 +13,12 @@ import { useAuthStore, useThemeStore } from '@/stores';
 import './dashboard.css';
 
 const { Link, Text } = Typography;
+
+// Get amount color based on value
+const getAmountColor = (value: number): string => {
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
 
 interface MonthlySummaryTableProps {
   data: SummaryResponse | null;
@@ -88,7 +94,10 @@ export const MonthlySummaryTable: React.FC<MonthlySummaryTableProps> = ({
   );
 
   // Convert transactions to table rows
-  const tableData: MonthlySummaryTableRow[] = useMemo(() => {
+  const tableData: (MonthlySummaryTableRow & {
+    grossRaw: number;
+    netRaw: number;
+  })[] = useMemo(() => {
     if (!data?.transactions) return [];
 
     return data.transactions.map((record, index) => ({
@@ -98,6 +107,8 @@ export const MonthlySummaryTable: React.FC<MonthlySummaryTableProps> = ({
       totalTranx: record.num_tran,
       gross: formatCurrency(record.gross, record.currency),
       net: formatCurrency(record.net, record.currency),
+      grossRaw: record.gross,
+      netRaw: record.net,
       paymentMethods: record.vendor,
       currency: record.currency,
     }));
@@ -136,18 +147,59 @@ export const MonthlySummaryTable: React.FC<MonthlySummaryTableProps> = ({
         dataIndex: 'gross',
         key: 'gross',
         align: 'left',
+        render: (text: string, record) => (
+          <span
+            style={{ color: getAmountColor(record.grossRaw), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Net*',
         dataIndex: 'net',
         key: 'net',
         align: 'left',
+        render: (text: string, record) => (
+          <span
+            style={{ color: getAmountColor(record.netRaw), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Payment Methods',
         dataIndex: 'paymentMethods',
         key: 'paymentMethods',
         align: 'left',
+        render: (text: string) => {
+          if (!text) return '-';
+          const methods = text
+            .split(',')
+            .map((m) => m.trim())
+            .filter(Boolean);
+          return (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {methods.map((method, index) => (
+                <Tag
+                  key={index}
+                  style={{
+                    backgroundColor: '#f0f0f0',
+                    color: '#666666',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '2px 8px',
+                    margin: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  {method}
+                </Tag>
+              ))}
+            </div>
+          );
+        },
       },
     ],
     [isClickable, primaryColor, navigateToDetail],

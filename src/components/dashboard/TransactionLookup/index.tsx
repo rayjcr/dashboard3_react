@@ -2,8 +2,8 @@ import React, {
   useCallback,
   useEffect,
   useState,
-  useRef,
   useMemo,
+  useRef,
 } from 'react';
 import { App } from 'antd';
 import type { Dayjs } from 'dayjs';
@@ -40,6 +40,7 @@ export const TransactionLookup: React.FC<TransactionLookupProps> = ({
     transactionData,
     loading,
     error,
+    loadedNodeId,
     page,
     pageSize,
     startDate: storeStartDate,
@@ -64,8 +65,8 @@ export const TransactionLookup: React.FC<TransactionLookupProps> = ({
   // Download state
   const [downloadingCSV, setDownloadingCSV] = useState(false);
 
-  // Track if initial load has been done
-  const initialLoadRef = useRef<string | null>(null);
+  // Track previous refreshKey to detect actual changes (not just component remount)
+  const prevRefreshKeyRef = useRef<number>(refreshKey);
 
   // Check if can load data
   const canLoad = selectedNode?.id && sessionId && hierarchyId;
@@ -120,12 +121,14 @@ export const TransactionLookup: React.FC<TransactionLookupProps> = ({
     ) => {
       const params = buildRequestParams(pageNum, pageSz, start, end, search);
       if (params) {
-        fetchTransactions(params);
+        const currentNodeId = selectedNode?.id || '';
+        fetchTransactions(params, currentNodeId);
       }
     },
     [
       buildRequestParams,
       fetchTransactions,
+      selectedNode?.id,
       page,
       pageSize,
       storeStartDate,
@@ -134,15 +137,22 @@ export const TransactionLookup: React.FC<TransactionLookupProps> = ({
     ],
   );
 
-  // Initial load when component mounts or node changes
+  // Initial load when component mounts (tab becomes active)
+  // With destroyInactiveTabPane=true in Tabs, component is remounted each time tab is activated
+  // Use loadedNodeId from store to check if data for this node is already cached
   useEffect(() => {
-    const nodeKey = selectedNode?.id ? `${selectedNode.id}-${sessionId}` : null;
-
-    if (!canLoad || initialLoadRef.current === nodeKey) {
+    if (!canLoad) {
       return;
     }
 
-    initialLoadRef.current = nodeKey;
+    const currentNodeId = selectedNode?.id || '';
+
+    // If data for this node is already loaded, skip loading (use cache)
+    if (loadedNodeId === currentNodeId && transactionData) {
+      return;
+    }
+
+    // Clear and load fresh data for this node
     clearTransactionLookup();
     setLocalStartDate(null);
     setLocalEndDate(null);
@@ -160,21 +170,24 @@ export const TransactionLookup: React.FC<TransactionLookupProps> = ({
       hierarchy: hierarchyId!,
       selectedMid: selectedNode!.id,
     };
-    fetchTransactions(params);
-  }, [
-    selectedNode?.id,
-    selectedNode,
-    sessionId,
-    hierarchyId,
-    canLoad,
-    merchantId,
-    clearTransactionLookup,
-    fetchTransactions,
-  ]);
+    fetchTransactions(params, currentNodeId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canLoad]);
 
-  // Handle refresh when refreshKey changes (tab click on same tab)
+  // Handle refresh when refreshKey changes (double-click on same tab)
+  // Only trigger when refreshKey actually changes, not on component remount
   useEffect(() => {
+    // Skip if refreshKey hasn't changed from previous value
+    if (refreshKey === prevRefreshKeyRef.current) {
+      return;
+    }
+
+    // Update ref to current value
+    prevRefreshKeyRef.current = refreshKey;
+
     if (refreshKey > 0 && canLoad) {
+      const currentNodeId = selectedNode?.id || '';
+
       // Clear search conditions and reload
       clearTransactionLookup();
       setLocalStartDate(null);
@@ -192,7 +205,7 @@ export const TransactionLookup: React.FC<TransactionLookupProps> = ({
         hierarchy: hierarchyId!,
         selectedMid: selectedNode!.id,
       };
-      fetchTransactions(params);
+      fetchTransactions(params, currentNodeId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);

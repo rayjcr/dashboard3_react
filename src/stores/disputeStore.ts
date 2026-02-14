@@ -18,6 +18,9 @@ export const useDisputeStore = create<DisputeState>()(
       loading: false,
       error: null,
 
+      // Loaded node tracking (for caching)
+      loadedNodeId: null,
+
       // Pagination
       page: 0,
       pageSize: 10,
@@ -29,7 +32,7 @@ export const useDisputeStore = create<DisputeState>()(
       disputeType: 'all',
 
       // Actions
-      fetchDisputes: async (params: DisputeListRequest) => {
+      fetchDisputes: async (params: DisputeListRequest, nodeId?: string) => {
         // Cancel previous request if exists
         if (disputeAbortController) {
           disputeAbortController.abort();
@@ -51,6 +54,7 @@ export const useDisputeStore = create<DisputeState>()(
             disputeData: response,
             loading: false,
             error: null,
+            loadedNodeId: nodeId || null,
           });
         } catch (error) {
           // Ignore abort errors
@@ -101,6 +105,7 @@ export const useDisputeStore = create<DisputeState>()(
           disputeData: null,
           loading: false,
           error: null,
+          loadedNodeId: null,
           page: 0,
           startDate: '',
           endDate: '',

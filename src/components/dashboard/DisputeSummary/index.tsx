@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-  useMemo,
-} from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { Tabs, App } from 'antd';
 import type { Dayjs } from 'dayjs';
 import debounce from 'lodash/debounce';
@@ -30,6 +24,7 @@ export const DisputeSummary: React.FC = () => {
     disputeData,
     loading,
     error,
+    loadedNodeId,
     page,
     pageSize,
     startDate: storeStartDate,
@@ -54,9 +49,6 @@ export const DisputeSummary: React.FC = () => {
   // Download state
   const [downloadingCSV, setDownloadingCSV] = useState(false);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
-
-  // Track if initial load has been done
-  const initialLoadRef = useRef<string | null>(null);
 
   // Check if can load data
   const canLoad = selectedNode?.id && sessionId && hierarchyId;
@@ -126,12 +118,14 @@ export const DisputeSummary: React.FC = () => {
         keyword,
       );
       if (params) {
-        fetchDisputes(params);
+        const currentNodeId = selectedNode?.id || '';
+        fetchDisputes(params, currentNodeId);
       }
     },
     [
       buildRequestParams,
       fetchDisputes,
+      selectedNode?.id,
       page,
       pageSize,
       storeStartDate,
@@ -162,15 +156,22 @@ export const DisputeSummary: React.FC = () => {
     storeSearchKey,
   ]);
 
-  // Initial load when component mounts or node changes
+  // Initial load when component mounts (tab becomes active)
+  // With destroyInactiveTabPane=true in Tabs, component is remounted each time tab is activated
+  // Use loadedNodeId from store to check if data for this node is already cached
   useEffect(() => {
-    const nodeKey = selectedNode?.id ? `${selectedNode.id}-${sessionId}` : null;
-
-    if (!canLoad || initialLoadRef.current === nodeKey) {
+    if (!canLoad) {
       return;
     }
 
-    initialLoadRef.current = nodeKey;
+    const currentNodeId = selectedNode?.id || '';
+
+    // If data for this node is already loaded, skip loading (use cache)
+    if (loadedNodeId === currentNodeId && disputeData) {
+      return;
+    }
+
+    // Clear and load fresh data for this node
     clearDispute();
     setLocalStartDate(null);
     setLocalEndDate(null);
@@ -190,18 +191,9 @@ export const DisputeSummary: React.FC = () => {
       endDate: '',
       searchKey: '',
     };
-    fetchDisputes(params);
-  }, [
-    selectedNode?.id,
-    selectedNode,
-    sessionId,
-    hierarchyId,
-    canLoad,
-    merchantId,
-    isLeafNode,
-    clearDispute,
-    fetchDisputes,
-  ]);
+    fetchDisputes(params, currentNodeId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canLoad]);
 
   // Handle date range change
   const handleDateRangeChange = useCallback(

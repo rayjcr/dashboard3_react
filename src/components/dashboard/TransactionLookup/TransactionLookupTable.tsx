@@ -20,6 +20,13 @@ import { CaptureModal } from './CaptureModal';
 import { CancelConfirmModal } from './CancelConfirmModal';
 import '../dashboard.css';
 
+// Get amount color based on value
+const getAmountColor = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) return '#666666';
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
+
 interface TransactionLookupTableProps {
   data: TransactionLookupResponse | null;
   loading: boolean;
@@ -291,7 +298,11 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
         width: 120,
         render: (value, record) => {
           if (value === 0 || value === null || value === undefined) return 'NA';
-          return formatCurrency(value, record.auth_currency || 'USD');
+          return (
+            <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+              {formatCurrency(value, record.auth_currency || 'USD')}
+            </span>
+          );
         },
       },
       {
@@ -302,7 +313,11 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
         width: 130,
         render: (value, record) => {
           if (value === null || value === undefined || value === '') return '-';
-          return formatCurrency(value, record.auth_currency || 'USD');
+          return (
+            <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+              {formatCurrency(value, record.auth_currency || 'USD')}
+            </span>
+          );
         },
       },
       {
@@ -374,7 +389,11 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
         width: 140,
         render: (value, record) => {
           if (value === null || value === undefined || value === '') return '-';
-          return formatCurrency(value, record.auth_currency || 'USD');
+          return (
+            <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+              {formatCurrency(value, record.auth_currency || 'USD')}
+            </span>
+          );
         },
       },
       {
@@ -385,7 +404,11 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
         width: 120,
         render: (value, record) => {
           if (value === null || value === undefined || value === '') return '-';
-          return formatCurrency(value, record.auth_currency || 'USD');
+          return (
+            <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+              {formatCurrency(value, record.auth_currency || 'USD')}
+            </span>
+          );
         },
       },
       {
@@ -396,7 +419,11 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
         width: 100,
         render: (value, record) => {
           if (value === null || value === undefined || value === '') return '-';
-          return formatCurrency(value, record.auth_currency || 'USD');
+          return (
+            <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+              {formatCurrency(value, record.auth_currency || 'USD')}
+            </span>
+          );
         },
       },
       {

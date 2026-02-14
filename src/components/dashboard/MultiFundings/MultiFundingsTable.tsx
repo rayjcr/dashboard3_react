@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Table, Empty } from 'antd';
+import { Table, Empty, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { MultiFundingsRecord } from '@/types/dashboard';
 import dayjs from 'dayjs';
@@ -9,6 +9,12 @@ import '../dashboard.css';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+// Get amount color based on value (value is in cents)
+const getAmountColor = (value: number): string => {
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
 
 interface MultiFundingsTableProps {
   data: MultiFundingsRecord[];
@@ -84,8 +90,11 @@ export const MultiFundingsTable: React.FC<MultiFundingsTableProps> = ({
         key: 'sum',
         width: 150,
         align: 'right' as const,
-        render: (value: number, record: MultiFundingsRecord) =>
-          formatAmount(value, record.currency),
+        render: (value: number, record: MultiFundingsRecord) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, record.currency)}
+          </span>
+        ),
       },
       {
         title: 'Method',
@@ -93,11 +102,33 @@ export const MultiFundingsTable: React.FC<MultiFundingsTableProps> = ({
         key: 'funding',
         width: 180,
         align: 'left' as const,
-        render: (value: string) => (
-          <span style={{ wordBreak: 'break-all', lineHeight: '1.3' }}>
-            {value || '-'}
-          </span>
-        ),
+        render: (value: string) => {
+          if (!value) return '-';
+          const methods = value
+            .split(',')
+            .map((m) => m.trim())
+            .filter(Boolean);
+          return (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {methods.map((method, index) => (
+                <Tag
+                  key={index}
+                  style={{
+                    backgroundColor: '#f0f0f0',
+                    color: '#666666',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '2px 8px',
+                    margin: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  {method}
+                </Tag>
+              ))}
+            </div>
+          );
+        },
       },
       {
         title: 'Payout',
@@ -105,8 +136,11 @@ export const MultiFundingsTable: React.FC<MultiFundingsTableProps> = ({
         key: 'settled',
         width: 150,
         align: 'right' as const,
-        render: (value: number, record: MultiFundingsRecord) =>
-          formatAmount(value, record.currency),
+        render: (value: number, record: MultiFundingsRecord) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, record.currency)}
+          </span>
+        ),
       },
     ],
     [],

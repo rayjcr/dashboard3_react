@@ -240,38 +240,40 @@ Transaction Lookup 提供交易查询功能，支持日期范围筛选和关键�
 
 #### 表头配置（28 列）
 
-| 序号 | 列名             | 字段映射            | 宽度  | 说明                              |
-| ---- | ---------------- | ------------------- | ----- | --------------------------------- |
-| 1    | UPT              | `transaction_id`    | 180px | 交易 ID，粗体显示                 |
-| 2    | Ref Id           | `txn_ref_num`       | 140px | 交易参考号                        |
-| 3    | OID              | `oid`               | 130px | 订单 ID                           |
-| 4    | Payment Info     | `payment_info`      | 200px | 支付信息                          |
-| 5    | Type             | `transaction_type`  | 80px  | 交易类型                          |
-| 6    | Score            | `score`             | 70px  | 风控分数，带颜色标识              |
-| 7    | Card Type        | `card_type_name`    | 100px | 卡类型                            |
-| 8    | Vendor           | `vendor`            | 100px | 供应商                            |
-| 9    | Gateway          | `payment_gateway`   | 100px | 支付网关                          |
-| 10   | Status           | `status`            | 100px | 状态                              |
-| 11   | Card Number      | `card_number`       | 150px | 卡号                              |
-| 12   | Cardholder Name  | `cardholder_name`   | 150px | 持卡人姓名                        |
-| 13   | Currency         | `txn_currency`      | 80px  | 交易货币                          |
-| 14   | Txn Amount       | `txn_amt`           | 120px | 交易金额                          |
-| 15   | SC               | `scharge`           | 100px | 服务费                            |
-| 16   | Total            | `txn_amt + scharge` | 120px | 总金额（粗体）                    |
-| 17   | Capture Amount   | `capture_amt`       | 120px | 捕获金额                          |
-| 18   | Capture SC       | `capture_sc_amt`    | 100px | 捕获服务费                        |
-| 19   | Refund Amount    | `refund_txn_amt`    | 120px | 退款金额                          |
-| 20   | Refund SC        | `refund_sc_amt`     | 100px | 退款服务费                        |
-| 21   | Auth Code        | `auth_code`         | 100px | 授权码                            |
-| 22   | Billing Address  | `billing_address`   | 200px | 账单地址                          |
-| 23   | Shipping Address | `shipping_address`  | 200px | 配送地址                          |
-| 24   | Phone            | `phone`             | 120px | 电话                              |
-| 25   | Email            | `customer_email`    | 180px | 客户邮箱                          |
-| 26   | Creation Time    | `creation_time`     | 150px | 创建时间                          |
-| 27   | Modified Time    | `modified_time`     | 150px | 修改时间                          |
-| 28   | Action           | -                   | 180px | 操作按钮（Capture/Refund/Cancel） |
+| 序号 | 列名                      | 字段映射                         | 宽度  | 可配置 | 说明                                  |
+| ---- | ------------------------- | -------------------------------- | ----- | ------ | ------------------------------------- |
+| 1    | Location                  | `location`                       | 140px | 否     | 位置                                  |
+| 2    | Store Name                | `store_name`                     | 150px | 否     | 店铺名称                              |
+| 3    | Transaction ID            | `transaction_id`                 | 170px | 否     | 交易 ID                               |
+| 4    | Parent Transaction ID     | `parent_transaction_id`          | 170px | 否     | 父交易 ID，格式化显示                 |
+| 5    | Reference ID              | `reference`                      | 150px | 是     | 参考号                                |
+| 6    | Reference2                | `reference2`                     | 150px | 是     | 参考号2                               |
+| 7    | Extral Reference          | `extral_reference`               | 150px | 是     | 额外参考号                            |
+| 8    | Date/Time                 | `time_created`                   | 110px | 否     | 创建时间                              |
+| 9    | Transaction Type          | `transaction_type`               | 135px | 否     | 交易类型，格式化显示                  |
+| 10   | Status                    | `tranx_status`                   | 80px  | 是     | 交易状态                              |
+| 11   | Payment Method            | `payment_method`                 | 135px | 否     | 支付方式，格式化显示                  |
+| 12   | Gateway                   | `payment_gateway`                | 100px | 是     | 支付网关                              |
+| 13   | Card Number               | `buyer_id`                       | 150px | 否     | 卡号                                  |
+| 14   | Vendor Reference          | `method_trans_id`                | 150px | 否     | 供应商参考号                          |
+| 15   | Auth Currency             | `auth_currency`                  | 120px | 是     | 授权货币                              |
+| 16   | Total                     | `total`                          | 120px | 否     | 总金额，货币格式化，0/null 显示 NA    |
+| 17   | Auth Amount               | `auth_amount`                    | 130px | 是     | 授权金额，货币格式化                  |
+| 18   | Action                    | -                                | 180px | 否     | 操作按钮（Capture/Refund/Cancel）     |
+| 19   | Captured Amount           | `amount_captured`                | 140px | 是     | 捕获金额，货币格式化                  |
+| 20   | Sales                     | `sales`                          | 120px | 否     | 销售额，货币格式化                    |
+| 21   | Tip                       | `tip`                            | 100px | 否     | 小费，货币格式化                      |
+| 22   | Score                     | `risk_score`                     | 80px  | 是     | 风控分数，带颜色标识                  |
+| 23   | Reason Code               | `error_code`                     | 100px | 是     | 原因码                                |
+| 24   | Login Code                | `login_code`                     | 100px | 否     | 登录码                                |
+| 25   | Dispute Tag               | `dispute_tag`                    | 100px | 是     | 争议标签，通过 getDisputeTag 函数计算 |
+| 26   | Transaction Tag           | `transaction_tag`                | 120px | 是     | 交易标签                              |
+| 27   | Terminal ID               | `terminal_id`                    | 100px | 是     | 终端 ID                               |
+| 28   | Store of Original Payment | `original_merchant_name_english` | 180px | 是     | 原始支付店铺名称                      |
 
-表格总宽度：`3000px`，支持横向滚动。
+**可配置列**：用户可通过列配置功能显示/隐藏标记为"是"的列。
+
+表格总宽度：根据可见列动态计算，支持横向滚动。
 
 #### Action 按钮显示逻辑
 
@@ -408,11 +410,128 @@ interface TransactionActionResponse {
 
 #### Capture 功能
 
-> **实现状态**: 🔜 待实现
+> **实现状态**: ✅ 已完成
+> **相关文件**: `src/components/dashboard/TransactionLookup/CaptureModal.tsx`
+
+##### 弹窗表单字段
+
+| 字段            | 类型     | 可编辑 | 数据来源                                                 |
+| --------------- | -------- | ------ | -------------------------------------------------------- |
+| Transaction ID  | Input    | ❌     | `record.transaction_id`                                  |
+| Reference       | Input    | ❌     | `record.reference`                                       |
+| Date/Time       | Input    | ❌     | `record.time_created`                                    |
+| Original Amount | Input    | ❌     | `record.amount_authorized_remaining`（经货币转换后显示） |
+| Currency        | Input    | ❌     | `record.currency`                                        |
+| Capture Amount  | Input    | ✅     | 用户输入，默认值为 Original Amount，需验证               |
+| Multi-Capture   | Checkbox | ✅     | 用户勾选，默认不勾选                                     |
+| Last Capture    | Checkbox | ✅     | 用户勾选，默认不勾选                                     |
+
+##### 验证规则
+
+1. **Capture Amount**:
+   - 必填
+   - 必须大于 0
+   - 不能大于 Original Amount (remaining authorized amount)
+   - 根据货币类型验证小数位数：
+     - `KRW`, `JPY`, `CLP`, `ISK`, `IDR`: 不允许小数
+     - `KWD`: 最多 3 位小数
+     - 其他货币: 最多 2 位小数
+
+##### Multi-Capture 和 Last Capture 说明
+
+- **Multi-Capture**: 勾选时表示对单次授权执行多次 Capture 操作
+- **Last Capture**: 勾选时表示这是最后一次 Capture，将释放剩余授权金额
+- **提示文字**: "If a transaction is partially captured the remaining authorization amount will be released"
+
+##### API 接口
+
+**POST /transaction_action/capture**
+
+请求参数：
+
+```typescript
+interface CaptureRequest {
+  merchantId: string; // 商户 ID
+  transactionId: string; // 交易 ID
+  amount: string; // Capture 金额（字符串格式）
+  currency: string; // 货币代码
+  transactionDb: string; // 交易数据库
+  sessionId: string; // 会话 ID
+  multi_capture: boolean; // 是否多次 Capture
+  last_capture: boolean; // 是否最后一次 Capture
+  source: string | null; // 来源
+  pre_auth: boolean; // 是否预授权
+}
+```
+
+响应结构：
+
+```typescript
+interface TransactionActionResponse {
+  code: number; // 200 表示成功
+  message: string; // 响应消息
+}
+```
+
+##### 交互逻辑
+
+1. 点击 Capture 按钮打开弹窗
+2. 弹窗显示交易信息（只读）和可编辑字段
+3. Capture Amount 默认填入 Original Amount
+4. 用户可修改 Capture Amount 和勾选 Multi-Capture / Last Capture
+5. 点击 Confirm 前进行前端验证
+6. 验证通过后调用 API
+7. **成功**: 显示成功提示，关闭弹窗，刷新列表
+8. **失败**: 在弹窗内显示错误信息，不关闭弹窗
 
 #### Cancel 功能
 
-> **实现状态**: 🔜 待实现
+> **实现状态**: ✅ 已完成
+> **相关文件**: `src/components/dashboard/TransactionLookup/CancelConfirmModal.tsx`
+
+##### 弹窗内容
+
+Cancel 功能采用简单确认弹窗，无需填写额外信息。
+
+弹窗显示内容：
+
+- **提示文字**: "Do you want to cancel this transaction?"
+- **按钮**: No（取消）/ Yes（确认）
+
+##### API 接口
+
+**POST /transaction_action/cancel**
+
+请求参数：
+
+```typescript
+interface CancelRequest {
+  merchantId: string; // 商户 ID
+  transactionId: string; // 交易 ID
+  transactionDb: string; // 交易数据库
+  sessionId: string; // 会话 ID
+  source: string | null; // 来源
+  pre_auth: boolean; // 是否预授权
+}
+```
+
+响应结构：
+
+```typescript
+interface TransactionActionResponse {
+  code: number; // 200 表示成功
+  message: string; // 响应消息
+}
+```
+
+##### 交互逻辑
+
+1. 点击 Cancel 按钮打开确认弹窗
+2. 弹窗显示确认提示文字
+3. 点击 No 关闭弹窗，不执行操作
+4. 点击 Yes 调用 API
+5. **成功**: 关闭弹窗，刷新列表
+6. **失败**: 在弹窗内显示错误信息，不关闭弹窗
 
 #### Score 颜色标识
 
@@ -423,25 +542,25 @@ interface TransactionActionResponse {
 | < 50     | 绿色 | 低风险   |
 | 无分数   | 灰色 | 未评分   |
 
-#### Type 字段格式化
+#### Transaction Type 字段格式化
 
-| 原始值     | 显示值   |
-| ---------- | -------- |
-| `PURCHASE` | Purchase |
-| `REFUND`   | Refund   |
-| `VOID`     | Void     |
-| 其他       | 原始值   |
+> **实现文件**: `src/utils/transactionLookup.ts` - `formatTransactionType()`
+
+| 原始值        | 显示值   |
+| ------------- | -------- |
+| `pos_payment` | `charge` |
+| `pos_refund`  | `refund` |
+| 其他          | 原始值   |
 
 #### Payment Method 格式化
 
-| 原始值          | 显示值        |
-| --------------- | ------------- |
-| `wechatpay`     | WeChat Pay    |
-| `wechat`        | WeChat        |
-| `alipay`        | Alipay        |
-| `alipay_online` | Alipay Online |
-| `unionpay`      | UnionPay      |
-| 其他            | 原始值        |
+> **实现文件**: `src/utils/transactionLookup.ts` - `formatPaymentMethod()`
+
+| 原始值      | 显示值 |
+| ----------- | ------ |
+| `wechatpay` | `WXP`  |
+| `alipay`    | `ALP`  |
+| 其他        | 原始值 |
 
 ---
 
@@ -520,9 +639,40 @@ DashboardPage 读取 selectedNode
 ## 按需加载策略
 
 - 默认 Tab 为 `Daily Summary`，初始化时只加载 Daily 数据
-- 切换到 `Monthly Summary` Tab 时才加载 Monthly 数据
+- 切换到其他 Tab 时才加载对应数据
 - 每个 Tab 数据只加载一次，切换 Tab 不会重复加载
-- 切换节点时重置加载状态，重新加载当前 Tab 数据
+- **切换节点时**：重置加载状态，重新加载当前 Tab 数据
+- **双击当前 Tab 时**：强制刷新当前 Tab 数据（清除筛选条件并重新加载）
+
+### 双击刷新机制
+
+> **实现文件**: `src/pages/DashboardPage.tsx`
+
+通过 `isSameTab` 判断实现双击刷新：
+
+```typescript
+const isSameTab = key === activeTab;
+
+if (isSameTab) {
+  // 清除筛选条件
+  setDailyDate(null);
+  // 重新加载数据
+  loadDailySummary(0);
+}
+```
+
+各 Tab 刷新行为：
+
+| Tab                  | 双击刷新行为                          |
+| -------------------- | ------------------------------------- |
+| Daily Summary        | 清除日期筛选，重新加载                |
+| Monthly Summary      | 清除月份筛选，重新加载                |
+| Daily Settle Summary | 清除日期筛选，重新加载                |
+| Transaction Lookup   | 清除 store 数据，增加 refreshKey 触发 |
+| Dispute Summary      | 清除 store 数据，增加 refreshKey 触发 |
+| Alipay Direct        | 增加 refreshKey 触发组件重新加载      |
+| Multi Fundings       | 增加 refreshKey 触发组件重新加载      |
+| Reserve Summary      | 增加 refreshKey 触发组件重新加载      |
 
 ### 初始加载参数
 
@@ -962,35 +1112,41 @@ Reserve Summary 模块展示商户的储备金信息，包含三个数据表格�
 
 1. 自动选中层级树的第一个顶级节点
 2. 展开该节点
-3. **不自动选中任何 Tab**（`activeTab` 为空字符串）
-4. **不自动加载数据**
-
-当用户手动点击节点时：
-
-1. 选中 `Daily Summary` 作为默认 Tab
-2. 加载该 Tab 的数据
+3. **自动选中 `Daily Summary` 作为默认 Tab**
+4. **自动加载 Daily Summary 数据**
 
 ### 实现逻辑
 
-```typescript
-// 追踪是否是自动选中的顶级节点
-const wasAutoSelectedRef = useRef<boolean>(false);
+> **实现文件**: `src/pages/DashboardPage.tsx`
 
+```typescript
+// 使用 ref 追踪自动选中的节点 ID
+const autoSelectedNodeIdRef = useRef<number | null>(null);
+
+// 自动选中顶级节点
 useEffect(() => {
   if (!selectedNode && hierarchyTree && hierarchyTree.length > 0) {
     const topNode = hierarchyTree[0];
-    wasAutoSelectedRef.current = true; // 标记为自动选中
+    autoSelectedNodeIdRef.current = topNode.id; // 标记自动选中的节点
     setSelectedNode(topNode);
-    setExpandedKeys([String(topNode.id)]);
+    setExpandedKeys([`node-${topNode.id}`]);
   }
 }, [selectedNode, hierarchyTree]);
 
-// 在数据加载逻辑中
-if (wasAutoSelectedRef.current) {
-  wasAutoSelectedRef.current = false;
-  setActiveTab(''); // 不选中任何 Tab
-  return; // 不加载数据
-}
+// 节点变化时的处理
+useEffect(() => {
+  if (!selectedNode) return;
+
+  // 重置自动选中标记
+  if (autoSelectedNodeIdRef.current === selectedNode?.id) {
+    autoSelectedNodeIdRef.current = null;
+  }
+
+  // 切换节点时始终重置到 'daily' Tab 并加载数据
+  const targetTab = 'daily';
+  setActiveTab(targetTab);
+  loadDailySummary(0);
+}, [selectedNode]);
 ```
 
 ---

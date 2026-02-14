@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, Typography, Empty } from 'antd';
+import { Table, Typography, Empty, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   SummaryResponse,
@@ -14,6 +14,12 @@ import { useAuthStore, useThemeStore } from '@/stores';
 import './dashboard.css';
 
 const { Link, Text } = Typography;
+
+// Get amount color based on value
+const getAmountColor = (value: number): string => {
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
 
 interface DailySettleSummaryTableProps {
   data: SummaryResponse | null;
@@ -84,7 +90,10 @@ export const DailySettleSummaryTable: React.FC<
   );
 
   // Convert transactions to table rows
-  const tableData: DailySettleSummaryTableRow[] = useMemo(() => {
+  const tableData: (DailySettleSummaryTableRow & {
+    grossRaw: number;
+    payoutRaw: number;
+  })[] = useMemo(() => {
     if (!data?.transactions) return [];
 
     return data.transactions.map((record, index) => {
@@ -103,10 +112,12 @@ export const DailySettleSummaryTable: React.FC<
         totalTranx: settleRecord.num_tran ?? 0,
         // Gross -> gross (amount type)
         gross: formatCurrency(settleRecord.gross, settleRecord.currency),
+        grossRaw: settleRecord.gross,
         // Method -> vendor
         method: settleRecord.vendor || '',
         // Payout -> net (amount type)
         payout: formatCurrency(settleRecord.net, settleRecord.currency),
+        payoutRaw: settleRecord.net,
         currency: settleRecord.currency,
       };
     });
@@ -145,6 +156,13 @@ export const DailySettleSummaryTable: React.FC<
         dataIndex: 'gross',
         key: 'gross',
         align: 'left',
+        render: (text: string, record) => (
+          <span
+            style={{ color: getAmountColor(record.grossRaw), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
     ];
 
@@ -155,6 +173,33 @@ export const DailySettleSummaryTable: React.FC<
         dataIndex: 'method',
         key: 'method',
         align: 'left',
+        render: (text: string) => {
+          if (!text) return '-';
+          const methods = text
+            .split(',')
+            .map((m) => m.trim())
+            .filter(Boolean);
+          return (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {methods.map((method, index) => (
+                <Tag
+                  key={index}
+                  style={{
+                    backgroundColor: '#f0f0f0',
+                    color: '#666666',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '2px 8px',
+                    margin: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  {method}
+                </Tag>
+              ))}
+            </div>
+          );
+        },
       });
     }
 
@@ -164,6 +209,13 @@ export const DailySettleSummaryTable: React.FC<
       dataIndex: 'payout',
       key: 'payout',
       align: 'left',
+      render: (text: string, record) => (
+        <span
+          style={{ color: getAmountColor(record.payoutRaw), fontWeight: 500 }}
+        >
+          {text}
+        </span>
+      ),
     });
 
     return baseColumns;

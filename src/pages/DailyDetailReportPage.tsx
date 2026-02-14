@@ -51,6 +51,13 @@ import '@/components/dashboard/dashboard.css';
 
 const { Title, Text } = Typography;
 
+// Get amount color based on value
+const getAmountColor = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) return '#666666';
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
+
 /**
  * Detail Report Type: 'daily', 'monthly', or 'settle'
  */
@@ -188,7 +195,7 @@ export const DetailReportPage: React.FC = () => {
   const mttimezone = data?.mttimezone || '';
 
   // Format date/time with timezone on new line
-  // If the string contains (Timezone), display timezone on a new line
+  // If the string contains (Timezone), display timezone on a new line with smaller, gray font
   const formatDateTimeWithNewLine = (
     dateStr: string | null,
   ): React.ReactNode => {
@@ -201,7 +208,9 @@ export const DetailReportPage: React.FC = () => {
         <>
           {dateTimePart}
           <br />
-          {timezonePart}
+          <span style={{ fontSize: '11px', color: '#999999' }}>
+            {timezonePart}
+          </span>
         </>
       );
     }
@@ -342,19 +351,31 @@ export const DetailReportPage: React.FC = () => {
           title: 'Gross',
           dataIndex: 'total',
           key: 'total',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         },
         {
           title: 'Discount',
           dataIndex: 'merchant_discount',
           key: 'merchant_discount',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         },
         {
           title: 'Authorization',
           dataIndex: 'merchant_fixed',
           key: 'merchant_fixed',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         },
       ];
 
@@ -364,7 +385,11 @@ export const DetailReportPage: React.FC = () => {
           title: 'VAT',
           dataIndex: 'vat_fee',
           key: 'vat_fee',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         });
       }
 
@@ -374,7 +399,11 @@ export const DetailReportPage: React.FC = () => {
           title: 'Refund Fee',
           dataIndex: 'refund_fee',
           key: 'refund_fee',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         });
       }
 
@@ -383,7 +412,11 @@ export const DetailReportPage: React.FC = () => {
         title: 'Customized Fee',
         dataIndex: 'customized_fee',
         key: 'customized_fee',
-        render: (val, record) => formatCurrency(val, record.currency),
+        render: (val, record) => (
+          <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+            {formatCurrency(val, record.currency)}
+          </span>
+        ),
       });
 
       // Add remaining columns
@@ -392,13 +425,21 @@ export const DetailReportPage: React.FC = () => {
           title: 'Net',
           dataIndex: 'net',
           key: 'net',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         },
         {
           title: 'Tip',
           dataIndex: 'tip',
           key: 'tip',
-          render: (val, record) => formatCurrency(val, record.currency),
+          render: (val, record) => (
+            <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+              {formatCurrency(val, record.currency)}
+            </span>
+          ),
         },
         {
           title: 'Login Code',
@@ -463,25 +504,41 @@ export const DetailReportPage: React.FC = () => {
       title: 'Gross',
       dataIndex: 'total',
       key: 'total',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Discount',
       dataIndex: 'merchant_discount',
       key: 'merchant_discount',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Authorization',
       dataIndex: 'merchant_fixed',
       key: 'merchant_fixed',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Net',
       dataIndex: 'net',
       key: 'net',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Dispute Tag',
@@ -564,13 +621,21 @@ export const DetailReportPage: React.FC = () => {
       title: 'Fee',
       dataIndex: 'fee',
       key: 'fee',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Net',
       dataIndex: 'net',
       key: 'net',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Tip',
@@ -683,13 +748,21 @@ export const DetailReportPage: React.FC = () => {
       title: 'Fee',
       dataIndex: 'fee',
       key: 'fee',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Net',
       dataIndex: 'net',
       key: 'net',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Tip',
@@ -755,7 +828,11 @@ export const DetailReportPage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'total',
       key: 'total',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Settle time',
@@ -798,7 +875,11 @@ export const DetailReportPage: React.FC = () => {
       title: 'Gross',
       dataIndex: 'total',
       key: 'total',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Settle time',
@@ -846,7 +927,11 @@ export const DetailReportPage: React.FC = () => {
       title: 'Gross',
       dataIndex: 'total',
       key: 'total',
-      render: (val, record) => formatCurrency(val, record.currency),
+      render: (val, record) => (
+        <span style={{ color: getAmountColor(val), fontWeight: 500 }}>
+          {formatCurrency(val, record.currency)}
+        </span>
+      ),
     },
     {
       title: 'Settle time',
@@ -925,10 +1010,25 @@ export const DetailReportPage: React.FC = () => {
 
     const subs = info.subs || [];
 
+    // Helper to render amount with color
+    const renderAmount = (value: string, rawValue?: number) => {
+      // If it's a number row (not "Number of Transaction"), apply color
+      if (rawValue !== undefined) {
+        return (
+          <span style={{ color: getAmountColor(rawValue), fontWeight: 500 }}>
+            {value}
+          </span>
+        );
+      }
+      return value;
+    };
+
     const columns: ColumnsType<{
       label: string;
       total: string;
-      [key: string]: string;
+      totalRaw?: number;
+      isAmountRow?: boolean;
+      [key: string]: string | number | boolean | undefined;
     }> = [
       {
         title: '',
@@ -943,12 +1043,26 @@ export const DetailReportPage: React.FC = () => {
         dataIndex: 'total',
         key: 'total',
         width: 150,
+        render: (text: string, record) =>
+          record.isAmountRow
+            ? renderAmount(text, record.totalRaw as number)
+            : text,
       },
-      ...subs.map((sub, idx) => ({
-        title: sub.vendor,
+      ...subs.map((_, idx) => ({
+        title: subs[idx].vendor,
         dataIndex: `sub_${idx}`,
         key: `sub_${idx}`,
         width: 150,
+        render: (
+          text: string,
+          record: {
+            isAmountRow?: boolean;
+            [key: string]: string | number | boolean | undefined;
+          },
+        ) =>
+          record.isAmountRow
+            ? renderAmount(text, record[`sub_${idx}_raw`] as number)
+            : text,
       })),
     ];
 
@@ -956,12 +1070,15 @@ export const DetailReportPage: React.FC = () => {
       key: string;
       label: string;
       total: string;
-      [key: string]: string;
+      totalRaw?: number;
+      isAmountRow?: boolean;
+      [key: string]: string | number | boolean | undefined;
     }> = [
       {
         key: 'num_trans',
         label: 'Number of Transaction',
         total: String(info.total_transactions),
+        isAmountRow: false,
         ...subs.reduce(
           (acc, sub, idx) => ({
             ...acc,
@@ -974,10 +1091,13 @@ export const DetailReportPage: React.FC = () => {
         key: 'sub_total',
         label: 'Sub Total',
         total: formatCurrency(info.gross, currency),
+        totalRaw: info.gross,
+        isAmountRow: true,
         ...subs.reduce(
           (acc, sub, idx) => ({
             ...acc,
             [`sub_${idx}`]: formatCurrency(sub.gross, currency),
+            [`sub_${idx}_raw`]: sub.gross,
           }),
           {},
         ),
@@ -991,10 +1111,13 @@ export const DetailReportPage: React.FC = () => {
           key: 'captured',
           label: 'Captured',
           total: formatCurrency(info.captured || 0, currency),
+          totalRaw: info.captured || 0,
+          isAmountRow: true,
           ...subs.reduce(
             (acc, sub, idx) => ({
               ...acc,
               [`sub_${idx}`]: formatCurrency(sub.captured || 0, currency),
+              [`sub_${idx}_raw`]: sub.captured || 0,
             }),
             {},
           ),
@@ -1003,6 +1126,8 @@ export const DetailReportPage: React.FC = () => {
           key: 'same_day_refund',
           label: 'Same Day Refund',
           total: formatCurrency(info.same_day_refund_pv || 0, currency),
+          totalRaw: info.same_day_refund_pv || 0,
+          isAmountRow: true,
           ...subs.reduce(
             (acc, sub, idx) => ({
               ...acc,
@@ -1010,6 +1135,7 @@ export const DetailReportPage: React.FC = () => {
                 sub.same_day_refund_pv || 0,
                 currency,
               ),
+              [`sub_${idx}_raw`]: sub.same_day_refund_pv || 0,
             }),
             {},
           ),
@@ -1018,6 +1144,8 @@ export const DetailReportPage: React.FC = () => {
           key: 'cross_day_refund',
           label: 'Cross Day Refund',
           total: formatCurrency(info.x_day_refund_pv || 0, currency),
+          totalRaw: info.x_day_refund_pv || 0,
+          isAmountRow: true,
           ...subs.reduce(
             (acc, sub, idx) => ({
               ...acc,
@@ -1025,6 +1153,7 @@ export const DetailReportPage: React.FC = () => {
                 sub.x_day_refund_pv || 0,
                 currency,
               ),
+              [`sub_${idx}_raw`]: sub.x_day_refund_pv || 0,
             }),
             {},
           ),
@@ -1037,10 +1166,13 @@ export const DetailReportPage: React.FC = () => {
       key: 'tip',
       label: 'Tip',
       total: formatCurrency(info.tip_total, currency),
+      totalRaw: info.tip_total,
+      isAmountRow: true,
       ...subs.reduce(
         (acc, sub, idx) => ({
           ...acc,
           [`sub_${idx}`]: formatCurrency(sub.tip_total, currency),
+          [`sub_${idx}_raw`]: sub.tip_total,
         }),
         {},
       ),
@@ -1051,10 +1183,13 @@ export const DetailReportPage: React.FC = () => {
       key: 'fee',
       label: 'Fee',
       total: formatCurrency(info.fees, currency),
+      totalRaw: info.fees,
+      isAmountRow: true,
       ...subs.reduce(
         (acc, sub, idx) => ({
           ...acc,
           [`sub_${idx}`]: formatCurrency(sub.fees, currency),
+          [`sub_${idx}_raw`]: sub.fees,
         }),
         {},
       ),
@@ -1066,10 +1201,13 @@ export const DetailReportPage: React.FC = () => {
         key: 'vat',
         label: 'VAT',
         total: formatCurrency(info.vat_fee, currency),
+        totalRaw: info.vat_fee,
+        isAmountRow: true,
         ...subs.reduce(
           (acc, sub, idx) => ({
             ...acc,
             [`sub_${idx}`]: formatCurrency(sub.vat_fee, currency),
+            [`sub_${idx}_raw`]: sub.vat_fee,
           }),
           {},
         ),
@@ -1081,6 +1219,8 @@ export const DetailReportPage: React.FC = () => {
         key: 'reserve',
         label: 'Reserve',
         total: formatCurrency(info.reserve || 0, currency),
+        totalRaw: info.reserve || 0,
+        isAmountRow: true,
         ...subs.reduce(
           (acc, _, idx) => ({
             ...acc,
@@ -1097,6 +1237,8 @@ export const DetailReportPage: React.FC = () => {
         key: 'itemized_fee',
         label: 'Itemized Fee',
         total: formatCurrency(info.itemized_fee || 0, currency),
+        totalRaw: info.itemized_fee || 0,
+        isAmountRow: true,
         ...subs.reduce(
           (acc, _, idx) => ({
             ...acc,
@@ -1113,6 +1255,8 @@ export const DetailReportPage: React.FC = () => {
         key: 'misc_fee',
         label: 'Misc Fee',
         total: formatCurrency(info.apex_fee || 0, currency),
+        totalRaw: info.apex_fee || 0,
+        isAmountRow: true,
         ...subs.reduce(
           (acc, _, idx) => ({
             ...acc,
@@ -1128,10 +1272,13 @@ export const DetailReportPage: React.FC = () => {
       key: 'net',
       label: 'Net',
       total: formatCurrency(info.net, currency),
+      totalRaw: info.net,
+      isAmountRow: true,
       ...subs.reduce(
         (acc, sub, idx) => ({
           ...acc,
           [`sub_${idx}`]: formatCurrency(sub.net, currency),
+          [`sub_${idx}_raw`]: sub.net,
         }),
         {},
       ),

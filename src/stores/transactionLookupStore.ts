@@ -43,6 +43,9 @@ export const useTransactionLookupStore = create<TransactionLookupState>()(
       loading: false,
       error: null,
 
+      // Loaded node tracking (for caching)
+      loadedNodeId: null,
+
       // Pagination
       page: 0,
       pageSize: 10,
@@ -56,7 +59,10 @@ export const useTransactionLookupStore = create<TransactionLookupState>()(
       columnConfig: loadColumnConfigFromStorage(),
 
       // Actions
-      fetchTransactions: async (params: TransactionLookupRequest) => {
+      fetchTransactions: async (
+        params: TransactionLookupRequest,
+        nodeId?: string,
+      ) => {
         // Cancel previous request if exists
         if (transactionAbortController) {
           transactionAbortController.abort();
@@ -74,6 +80,7 @@ export const useTransactionLookupStore = create<TransactionLookupState>()(
             transactionData: response,
             loading: false,
             error: null,
+            loadedNodeId: nodeId || null,
           });
         } catch (error) {
           // Ignore abort errors
@@ -137,6 +144,7 @@ export const useTransactionLookupStore = create<TransactionLookupState>()(
           transactionData: null,
           loading: false,
           error: null,
+          loadedNodeId: null,
           page: 0,
           startDate: '',
           endDate: '',

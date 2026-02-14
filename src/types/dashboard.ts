@@ -319,6 +319,9 @@ export interface TransactionLookupState {
   loading: boolean;
   error: string | null;
 
+  // Loaded node tracking (for caching)
+  loadedNodeId: string | null;
+
   // Pagination
   page: number;
   pageSize: number;
@@ -332,7 +335,10 @@ export interface TransactionLookupState {
   columnConfig: Record<string, string[]>;
 
   // Actions
-  fetchTransactions: (params: TransactionLookupRequest) => Promise<void>;
+  fetchTransactions: (
+    params: TransactionLookupRequest,
+    nodeId?: string,
+  ) => Promise<void>;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
   setStartDate: (date: string) => void;
@@ -721,6 +727,9 @@ export interface DisputeState {
   loading: boolean;
   error: string | null;
 
+  // Loaded node tracking (for caching)
+  loadedNodeId: string | null;
+
   // Pagination
   page: number;
   pageSize: number;
@@ -732,7 +741,7 @@ export interface DisputeState {
   disputeType: DisputeType;
 
   // Actions
-  fetchDisputes: (params: DisputeListRequest) => Promise<void>;
+  fetchDisputes: (params: DisputeListRequest, nodeId?: string) => Promise<void>;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
   setStartDate: (date: string) => void;

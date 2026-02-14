@@ -87,17 +87,16 @@ export const AliDirectSettlement: React.FC = () => {
     ],
   );
 
-  // Initial load when component mounts or node changes
+  // Initial load when component mounts (tab becomes active)
+  // With destroyInactiveTabPane=true in Tabs, component is remounted each time tab is activated
   useEffect(() => {
-    const nodeKey = merchantId ? `${merchantId}-${sessionId}` : null;
-
-    // Skip if cannot load or already loaded for this node
-    if (!canLoad || !nodeKey) {
+    // Only load on initial mount when canLoad is true and not already loaded
+    if (!canLoad || initialLoadRef.current !== null) {
       return;
     }
 
-    // Check if already loaded for this node
-    if (initialLoadRef.current === nodeKey) {
+    const nodeKey = merchantId ? `${merchantId}-${sessionId}` : null;
+    if (!nodeKey) {
       return;
     }
 
@@ -117,14 +116,8 @@ export const AliDirectSettlement: React.FC = () => {
       endDate: '',
     };
     fetchAliDirect(params);
-  }, [
-    merchantId,
-    sessionId,
-    canLoad,
-    clearAliDirect,
-    fetchAliDirect,
-    selectedNode?.id,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canLoad]);
 
   // Handle date range change
   const handleDateRangeChange = useCallback(

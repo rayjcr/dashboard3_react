@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Table, Typography, Empty } from 'antd';
+import { Table, Typography, Empty, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   AliDirectResponse,
@@ -10,6 +10,12 @@ import { formatCurrency } from '@/utils/currency';
 import '../dashboard.css';
 
 const { Text } = Typography;
+
+// Get amount color based on value
+const getAmountColor = (value: number): string => {
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
 
 interface AliDirectTableProps {
   data: AliDirectResponse | null;
@@ -102,6 +108,7 @@ function processTableData(
       rawMerchantDate: merchantDate,
       rawChinaDate: chinaDate,
       rawNet: record.net,
+      rawGross: record.gross,
     };
   });
 
@@ -208,6 +215,13 @@ export const AliDirectTable: React.FC<AliDirectTableProps> = ({
         key: 'merchantGross',
         align: 'right',
         width: 120,
+        render: (text: string, record: AliDirectTableRow) => (
+          <span
+            style={{ color: getAmountColor(record.rawGross), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Net',
@@ -215,6 +229,13 @@ export const AliDirectTable: React.FC<AliDirectTableProps> = ({
         key: 'merchantNet',
         align: 'right',
         width: 120,
+        render: (text: string, record: AliDirectTableRow) => (
+          <span
+            style={{ color: getAmountColor(record.rawNet), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Daily Settlement Amount',
@@ -225,7 +246,11 @@ export const AliDirectTable: React.FC<AliDirectTableProps> = ({
         onCell: (record: AliDirectTableRow) => ({
           rowSpan: record.merchantRowSpan,
         }),
-        render: (text: string) => <Text strong>{text}</Text>,
+        render: (text: string, record: AliDirectTableRow) => (
+          <Text strong style={{ color: getAmountColor(record.rawNet) }}>
+            {text}
+          </Text>
+        ),
       },
       // China timezone group
       {
@@ -260,6 +285,13 @@ export const AliDirectTable: React.FC<AliDirectTableProps> = ({
         key: 'chinaGross',
         align: 'right',
         width: 120,
+        render: (text: string, record: AliDirectTableRow) => (
+          <span
+            style={{ color: getAmountColor(record.rawGross), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Net',
@@ -267,6 +299,13 @@ export const AliDirectTable: React.FC<AliDirectTableProps> = ({
         key: 'chinaNet',
         align: 'right',
         width: 120,
+        render: (text: string, record: AliDirectTableRow) => (
+          <span
+            style={{ color: getAmountColor(record.rawNet), fontWeight: 500 }}
+          >
+            {text}
+          </span>
+        ),
       },
       {
         title: 'Daily Settlement Amount',
@@ -277,7 +316,11 @@ export const AliDirectTable: React.FC<AliDirectTableProps> = ({
         onCell: (record: AliDirectTableRow) => ({
           rowSpan: record.chinaRowSpan,
         }),
-        render: (text: string) => <Text strong>{text}</Text>,
+        render: (text: string, record: AliDirectTableRow) => (
+          <Text strong style={{ color: getAmountColor(record.rawNet) }}>
+            {text}
+          </Text>
+        ),
       },
     ];
   }, [merchantTimezone]);

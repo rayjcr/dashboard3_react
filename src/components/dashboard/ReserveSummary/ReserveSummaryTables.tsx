@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Table, Typography, Empty } from 'antd';
+import { Table, Typography, Empty, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   FixedReserveRecord,
@@ -10,6 +10,21 @@ import dayjs from 'dayjs';
 import '../dashboard.css';
 
 const { Title } = Typography;
+
+// Status color mapping for Paid Status
+const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  Paid: { bg: '#d4edda', text: '#155724' },
+  Pending: { bg: '#fff3cd', text: '#856404' },
+  Unpaid: { bg: '#f8d7da', text: '#721c24' },
+  default: { bg: '#f0f0f0', text: '#666666' },
+};
+
+// Get amount color based on value (value is in cents)
+const getAmountColor = (value: number | null): string => {
+  if (value === null || value === undefined) return '#666666';
+  if (value < 0) return '#ff4d4f'; // Red for negative
+  return '#52c41a'; // Green for positive or zero
+};
 
 interface ReserveSummaryTablesProps {
   fixedReserves: FixedReserveRecord[];
@@ -95,7 +110,11 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         key: 'total_amount',
         width: 150,
         align: 'right' as const,
-        render: (value: number | null) => formatAmount(value, currency),
+        render: (value: number | null) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, currency)}
+          </span>
+        ),
       },
       {
         title: 'Paid Status',
@@ -103,11 +122,24 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         key: 'status',
         width: 120,
         align: 'left' as const,
-        render: (value: string) => (
-          <span style={{ wordBreak: 'break-all', lineHeight: '1.3' }}>
-            {value || '—'}
-          </span>
-        ),
+        render: (value: string) => {
+          const statusKey = value || 'default';
+          const colors = STATUS_COLORS[statusKey] || STATUS_COLORS.default;
+          return (
+            <Tag
+              style={{
+                backgroundColor: colors.bg,
+                color: colors.text,
+                border: 'none',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                fontWeight: 500,
+              }}
+            >
+              {value || '—'}
+            </Tag>
+          );
+        },
       },
       {
         title: 'Paid Amount',
@@ -115,9 +147,18 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         width: 150,
         align: 'right' as const,
         render: (_: unknown, record: FixedReserveRecord) =>
-          record.status === 'Paid'
-            ? formatAmount(record.total_amount, currency)
-            : '—',
+          record.status === 'Paid' ? (
+            <span
+              style={{
+                color: getAmountColor(record.total_amount),
+                fontWeight: 500,
+              }}
+            >
+              {formatAmount(record.total_amount, currency)}
+            </span>
+          ) : (
+            '—'
+          ),
       },
       {
         title: 'Release Date',
@@ -176,7 +217,11 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         key: 'total_amount',
         width: 180,
         align: 'right' as const,
-        render: (value: number | null) => formatAmount(value, currency),
+        render: (value: number | null) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, currency)}
+          </span>
+        ),
       },
     ],
     [currency],
@@ -203,7 +248,11 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         key: 'withheld',
         width: 150,
         align: 'right' as const,
-        render: (value: number) => formatAmount(value, currency),
+        render: (value: number) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, currency)}
+          </span>
+        ),
       },
       {
         title: 'Released Amount',
@@ -211,7 +260,11 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         key: 'released',
         width: 150,
         align: 'right' as const,
-        render: (value: number) => formatAmount(value, currency),
+        render: (value: number) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, currency)}
+          </span>
+        ),
       },
       {
         title: 'Net Amount',
@@ -219,7 +272,11 @@ export const ReserveSummaryTables: React.FC<ReserveSummaryTablesProps> = ({
         key: 'net',
         width: 150,
         align: 'right' as const,
-        render: (value: number) => formatAmount(value, currency),
+        render: (value: number) => (
+          <span style={{ color: getAmountColor(value), fontWeight: 500 }}>
+            {formatAmount(value, currency)}
+          </span>
+        ),
       },
     ],
     [currency],

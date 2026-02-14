@@ -25,6 +25,8 @@ import {
   useAuthStore,
   useDashboardStore,
   useThemeStore,
+  useTransactionLookupStore,
+  useDisputeStore,
 } from '@/stores';
 import { cancelAllDashboardRequests } from '@/stores/dashboardStore';
 import { cancelDisputeRequests } from '@/stores/disputeStore';
@@ -132,12 +134,23 @@ export const DashboardPage: React.FC = () => {
     nodeSharedInfo,
   } = useDashboardStore();
 
+  // Get clear methods from TransactionLookup and Dispute stores for refresh
+  const { clearTransactionLookup } = useTransactionLookupStore();
+  const { clearDispute } = useDisputeStore();
+
   // Track active tab using URL parameter for back navigation support
   // Default to 'daily' tab after login
   // Initialize based on URL param, then existing data in store, then default to 'daily'
+  // Only core tabs (daily/monthly/settle) are restored from URL on page refresh
   const getInitialTab = (): string => {
     const tabFromUrl = searchParams.get('tab');
-    if (tabFromUrl) {
+    // Only restore core tabs from URL, other tabs should start from daily
+    if (
+      tabFromUrl &&
+      (tabFromUrl === 'daily' ||
+        tabFromUrl === 'monthly' ||
+        tabFromUrl === 'settle')
+    ) {
       return tabFromUrl;
     }
     // If dailySummary already has data in store, restore to daily tab
@@ -152,13 +165,20 @@ export const DashboardPage: React.FC = () => {
   };
   const [activeTab, setActiveTabState] = useState<string>(getInitialTab);
 
-  // Sync activeTab with URL param when navigating back
+  // On mount, if URL has a non-core tab, update URL to match activeTab
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab');
-    if (tabFromUrl && tabFromUrl !== activeTab) {
-      setActiveTabState(tabFromUrl);
+    if (
+      tabFromUrl &&
+      tabFromUrl !== 'daily' &&
+      tabFromUrl !== 'monthly' &&
+      tabFromUrl !== 'settle'
+    ) {
+      // URL has non-core tab, update URL to match the actual activeTab ('daily')
+      setSearchParams({ tab: 'daily' }, { replace: true });
     }
-  }, [searchParams, activeTab]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
   // Wrapper to update both state and URL param
   const setActiveTab = useCallback(
@@ -340,9 +360,9 @@ export const DashboardPage: React.FC = () => {
       autoSelectedNodeIdRef.current = null; // Reset the flag
     }
 
-    // Check URL param for tab, default to 'daily' if not specified
-    const tabFromUrl = searchParams.get('tab');
-    const targetTab = tabFromUrl || 'daily';
+    // When node changes, always reset to 'daily' tab
+    // This ensures consistent behavior and prevents other tab components from loading data
+    const targetTab = 'daily';
 
     // Mark as loaded BEFORE setting active tab to prevent double loading
     if (targetTab === 'daily') {
@@ -466,11 +486,15 @@ export const DashboardPage: React.FC = () => {
       } else if (key === 'transaction') {
         // TransactionLookup manages its own data, increment refresh key to trigger reload
         if (isSameTab) {
+          // Clear store data first so component will reload when remounted
+          clearTransactionLookup();
           setLookupRefreshKey((prev) => prev + 1);
         }
       } else if (key === 'dispute') {
         // DisputeSummary manages its own data, increment refresh key to trigger reload
         if (isSameTab) {
+          // Clear store data first so component will reload when remounted
+          clearDispute();
           setDisputeRefreshKey((prev) => prev + 1);
         }
       } else if (key === 'alipay') {
@@ -497,6 +521,8 @@ export const DashboardPage: React.FC = () => {
       loadDailySummary,
       loadMonthlySummary,
       loadDailySettleSummary,
+      clearTransactionLookup,
+      clearDispute,
     ],
   );
 
@@ -1175,6 +1201,7 @@ export const DashboardPage: React.FC = () => {
               onTabClick={handleTabChange}
               size="middle"
               tabBarStyle={{ marginBottom: 16 }}
+              destroyInactiveTabPane={true}
             />
           </Card>
         </Space>

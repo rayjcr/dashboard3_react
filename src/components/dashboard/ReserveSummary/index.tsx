@@ -58,14 +58,15 @@ export const ReserveSummary: React.FC<ReserveSummaryProps> = ({
     ],
   );
 
-  // Initial load when component mounts or node changes
+  // Initial load when component mounts (tab becomes active)
+  // With destroyInactiveTabPane=true in Tabs, component is remounted each time tab is activated
   useEffect(() => {
-    const nodeKey = selectedNode?.id ? `${selectedNode.id}-${sessionId}` : null;
-
-    if (!canLoad || initialLoadRef.current === nodeKey) {
+    // Only load on initial mount when canLoad is true and not already loaded
+    if (!canLoad || initialLoadRef.current !== null) {
       return;
     }
 
+    const nodeKey = selectedNode?.id ? `${selectedNode.id}-${sessionId}` : null;
     initialLoadRef.current = nodeKey;
     clearReserveSummary();
 
@@ -81,14 +82,7 @@ export const ReserveSummary: React.FC<ReserveSummaryProps> = ({
       row_count: 10,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedNode?.id,
-    sessionId,
-    canLoad,
-    merchantId,
-    clearReserveSummary,
-    fetchReserveSummary,
-  ]);
+  }, [canLoad]);
 
   // Handle refresh when refreshKey changes (tab click on same tab)
   useEffect(() => {
