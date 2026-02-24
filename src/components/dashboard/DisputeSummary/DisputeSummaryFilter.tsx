@@ -51,7 +51,7 @@ export const DisputeSummaryFilter: React.FC<DisputeSummaryFilterProps> = ({
           />
 
           {/* Search Key */}
-          <Space size="small" align="center">
+          {/* <Space size="small" align="center">
             <Text strong style={{ fontSize: 13 }}>
               Keyword:
             </Text>
@@ -62,7 +62,7 @@ export const DisputeSummaryFilter: React.FC<DisputeSummaryFilterProps> = ({
             onChange={(e) => onSearchKeyChange(e.target.value)}
             style={{ width: 240 }}
             allowClear
-          />
+          /> */}
 
           {/* Search Button */}
           <Button
