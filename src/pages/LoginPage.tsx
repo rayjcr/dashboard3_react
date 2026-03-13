@@ -58,14 +58,15 @@ export const LoginPage: React.FC = () => {
             }
           }
         }
-
         // Set expanded keys to show first level
         if (expandKeys.length > 0) {
           setExpandedKeys(expandKeys);
         }
       }
 
-      navigate('/', { replace: true });
+      // Navigate directly to /dashboard to avoid double mounting
+      // (/ redirects to /dashboard which could cause issues)
+      navigate('/dashboard', { replace: true });
     } catch {
       // Error is already handled in the store and useEffect above
     }

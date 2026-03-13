@@ -4,15 +4,15 @@ import { useAuthStore } from '@/stores';
 
 /**
  * Route guard component that requires authentication
- * Redirects to login page if user is not authenticated
+ * Redirects to SSO auth page if user is not authenticated
  */
 export const RequireAuth: React.FC = () => {
   const { token } = useAuthStore();
   const location = useLocation();
 
   if (!token) {
-    // Redirect to login while saving the attempted location
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Redirect to SSO auth page while saving the attempted location
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   return <Outlet />;

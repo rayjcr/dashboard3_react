@@ -115,6 +115,7 @@ export const useHierarchyStore = create<HierarchyState>()(
               parentId,
               sessionId,
             );
+            console.log(response, 'response');
             if (response.code == 200) {
               const children = response.childrens_data.map(
                 convertToHierarchyNode,

@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, Typography, Alert, Empty, Tag } from 'antd';
+import { Table, Typography, Empty, Tag } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   SummaryResponse,
@@ -44,7 +45,8 @@ export const MonthlySummaryTable: React.FC<MonthlySummaryTableProps> = ({
   const navigate = useNavigate();
   const { config } = useAuthStore();
   const { currentTheme } = useThemeStore();
-  const primaryColor = currentTheme === 'dark' ? '#7c3aed' : '#1890ff';
+  const isDark = currentTheme === 'dark';
+  const primaryColor = isDark ? '#7c3aed' : '#1890ff';
 
   // Parse user config
   const userConfig: UserConfig = useMemo(
@@ -208,12 +210,35 @@ export const MonthlySummaryTable: React.FC<MonthlySummaryTableProps> = ({
   // Show message if no content to display (after all hooks)
   if (!loading && data && !shouldShowContent) {
     return (
-      <Alert
-        title="* Please go to node page for transaction details"
-        type="info"
-        showIcon
-        style={{ margin: '20px 0' }}
-      />
+      <div
+        style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}
+      >
+        <div
+          style={{
+            maxWidth: 480,
+            width: '100%',
+            padding: '32px 24px',
+            background: isDark
+              ? 'rgba(124, 58, 237, 0.08)'
+              : 'rgba(24, 144, 255, 0.06)',
+            borderRadius: '8px',
+            borderLeft: `4px solid ${primaryColor}`,
+            textAlign: 'center',
+          }}
+        >
+          <InfoCircleOutlined
+            style={{
+              fontSize: 28,
+              color: primaryColor,
+              marginBottom: 12,
+              display: 'block',
+            }}
+          />
+          <Typography.Text style={{ color: '#888', fontSize: 14 }}>
+            * Please go to a specific node page for transaction details.
+          </Typography.Text>
+        </div>
+      </div>
     );
   }
 

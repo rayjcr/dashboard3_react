@@ -8,6 +8,14 @@ import { LazyPage } from '@/components/common/LazyPage';
 const LoginPage = lazy(() =>
   import('@/pages/LoginPage').then((m) => ({ default: m.LoginPage })),
 );
+const AuthPage = lazy(() =>
+  import('@/pages/AuthPage').then((m) => ({ default: m.AuthPage })),
+);
+const AuthCallbackPage = lazy(() =>
+  import('@/pages/AuthCallbackPage').then((m) => ({
+    default: m.AuthCallbackPage,
+  })),
+);
 const DashboardPage = lazy(() =>
   import('@/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
 );
@@ -29,9 +37,38 @@ const AccountSettingsPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
 );
+const LogoutPage = lazy(() =>
+  import('@/pages/LogoutPage').then((m) => ({ default: m.LogoutPage })),
+);
 
 export const routes: RouteObject[] = [
-  // Public routes (login, forgot-password, etc.)
+  // SSO auth routes (no guard, handles its own redirect logic)
+  {
+    path: '/auth',
+    element: (
+      <LazyPage>
+        <AuthPage />
+      </LazyPage>
+    ),
+  },
+  {
+    path: '/auth-callback',
+    element: (
+      <LazyPage>
+        <AuthCallbackPage />
+      </LazyPage>
+    ),
+  },
+  // Logout page (no guard, handles logout display)
+  {
+    path: '/logout',
+    element: (
+      <LazyPage>
+        <LogoutPage />
+      </LazyPage>
+    ),
+  },
+  // Public routes (login page - for manual login)
   {
     element: <PublicOnly />,
     children: [

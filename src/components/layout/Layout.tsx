@@ -15,7 +15,7 @@ const { Content } = AntLayout;
 const IDLE_TIMEOUT = 20 * 60 * 1000;
 
 export const Layout: React.FC = () => {
-  const { token, logout } = useAuthStore();
+  const { token } = useAuthStore();
   const { sidebarDrawerOpen, setDrawerOpen } = useUIStore();
   const { currentTheme } = useThemeStore();
   const theme = getTheme(currentTheme);
@@ -24,9 +24,11 @@ export const Layout: React.FC = () => {
 
   const handleIdle = useCallback(() => {
     if (isLoggedIn) {
-      logout();
+      // Don't call logout() here - let LogoutPage handle the full logout flow
+      // Use window.location.href to force redirect
+      window.location.href = '/logout?reason=timeout';
     }
-  }, [isLoggedIn, logout]);
+  }, [isLoggedIn]);
 
   // Only activate idle timeout when user is logged in
   useIdleTimeout({

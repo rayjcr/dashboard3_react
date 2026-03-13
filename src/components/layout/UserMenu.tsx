@@ -9,7 +9,7 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore, useThemeStore, useUIStore } from '@/stores';
+import { useThemeStore, useUIStore } from '@/stores';
 import { USER_MENU_ITEMS } from '@/config/userMenu';
 
 interface UserMenuProps {
@@ -40,7 +40,6 @@ function getIcon(iconName: string): React.ReactNode {
 export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuthStore();
   const { currentTheme } = useThemeStore();
   const { setSelectedNode } = useUIStore();
   const { message } = App.useApp();
@@ -75,9 +74,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 
       // Handle special action
       if (item.action === 'logout') {
-        logout();
-        message.success('Logged out successfully');
-        navigate('/login');
+        // Don't call logout() here - let LogoutPage handle the full logout flow
+        // including SSO logout API call
+        message.success('Logging out...');
+        // Use window.location.href to force redirect, avoiding RequireAuth redirect race
+        window.location.href = '/logout?reason=manual';
         return;
       }
 
@@ -92,7 +93,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
         navigate(item.path);
       }
     },
-    [logout, navigate, message, setSelectedNode],
+    [navigate, message, setSelectedNode],
   );
 
   return (

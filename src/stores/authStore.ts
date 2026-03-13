@@ -110,10 +110,8 @@ export const useAuthStore = create<AuthState>()(
           });
           // Clear localStorage
           localStorage.removeItem(AUTH_STORAGE_KEY);
-          // Redirect to login page
-          // Note: Using window.location.href intentionally to force full page reload
-          // and clear all client-side state. Store cannot use React Hooks like useNavigate.
-          window.location.href = '/login';
+          // Note: Don't redirect here - let the caller handle navigation
+          // This allows different logout scenarios to navigate to different URLs
         },
 
         clearError: () => {

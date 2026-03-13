@@ -18,6 +18,7 @@ import { formatCurrency } from '@/utils/currency';
 import { RefundModal } from './RefundModal';
 import { CaptureModal } from './CaptureModal';
 import { CancelConfirmModal } from './CancelConfirmModal';
+import { canWrite } from '@/config/featureFlags';
 import '../dashboard.css';
 
 // Get amount color based on value
@@ -351,8 +352,9 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
                 {buttons.showCapture && (
                   <Button
                     size="small"
-                    style={actionButtonStyle}
+                    style={canWrite() && actionButtonStyle}
                     onClick={() => handleCaptureClick(record)}
+                    disabled={!canWrite()}
                   >
                     Capture
                   </Button>
@@ -360,8 +362,9 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
                 {buttons.showRefund && (
                   <Button
                     size="small"
-                    style={actionButtonStyle}
+                    style={canWrite() && actionButtonStyle}
                     onClick={() => handleRefundClick(record)}
+                    disabled={!canWrite()}
                   >
                     Refund
                   </Button>
@@ -369,8 +372,9 @@ export const TransactionLookupTable: React.FC<TransactionLookupTableProps> = ({
                 {buttons.showCancel && (
                   <Button
                     size="small"
-                    style={actionButtonStyle}
+                    style={canWrite() && actionButtonStyle}
                     onClick={() => handleCancelClick(record)}
+                    disabled={!canWrite()}
                   >
                     Cancel
                   </Button>

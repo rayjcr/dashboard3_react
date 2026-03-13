@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, Typography, Alert, Empty, Tag } from 'antd';
+import { Table, Typography, Empty, Tag } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type {
   SummaryResponse,
@@ -12,7 +13,6 @@ import {
   isDailyDetailClickable,
   getStatusDisplay,
   parseUserConfig,
-  shouldShowPayoutColumn,
 } from '@/utils/dashboard';
 import { useAuthStore, useThemeStore } from '@/stores';
 import './dashboard.css';
@@ -59,7 +59,8 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
   const navigate = useNavigate();
   const { config, sessionId } = useAuthStore();
   const { currentTheme } = useThemeStore();
-  const primaryColor = currentTheme === 'dark' ? '#7c3aed' : '#1890ff';
+  const isDark = currentTheme === 'dark';
+  const primaryColor = isDark ? '#7c3aed' : '#1890ff';
 
   // Parse user config
   const userConfig: UserConfig = useMemo(
@@ -69,11 +70,6 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
 
   // Check if is Elavon merchant
   const isElavon = data?.isElavonSite || data?.hasElavonChild || false;
-
-  // Check if should show Payout column
-  const showPayout = useMemo(() => {
-    return shouldShowPayoutColumn(data?.hierarchy_user_data?.merchant_id);
-  }, [data]);
 
   // Get merchantId for detail navigation
   const detailMerchantId =
@@ -115,7 +111,6 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
   const tableData: (DailySummaryTableRow & {
     grossRaw: number;
     netRaw: number;
-    payoutRaw: number;
   })[] = useMemo(() => {
     if (!data?.transactions) return [];
 
@@ -126,10 +121,8 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
       totalTranx: record.num_tran,
       gross: formatCurrency(record.gross, record.currency),
       net: formatCurrency(record.net, record.currency),
-      payout: formatCurrency(record.payout, record.currency),
       grossRaw: record.gross,
       netRaw: record.net,
-      payoutRaw: record.payout,
       status: getStatusDisplay(
         record.status,
         record.settle_date,
@@ -202,23 +195,6 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
       },
     ];
 
-    // Conditionally add Payout column
-    if (showPayout) {
-      baseColumns.push({
-        title: 'Payout',
-        dataIndex: 'payout',
-        key: 'payout',
-        align: 'left',
-        render: (text: string, record) => (
-          <span
-            style={{ color: getAmountColor(record.payoutRaw), fontWeight: 500 }}
-          >
-            {text}
-          </span>
-        ),
-      });
-    }
-
     // Add remaining columns
     baseColumns.push(
       {
@@ -281,17 +257,40 @@ export const DailySummaryTable: React.FC<DailySummaryTableProps> = ({
     );
 
     return baseColumns;
-  }, [isClickable, isElavon, showPayout, primaryColor, handleDateClick]);
+  }, [isClickable, isElavon, primaryColor, handleDateClick]);
 
   // Show message if no content to display (after all hooks)
   if (!loading && data && !shouldShowContent) {
     return (
-      <Alert
-        title="* Please go to node page for transaction details"
-        type="info"
-        showIcon
-        style={{ margin: '20px 0' }}
-      />
+      <div
+        style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}
+      >
+        <div
+          style={{
+            maxWidth: 480,
+            width: '100%',
+            padding: '32px 24px',
+            background: isDark
+              ? 'rgba(124, 58, 237, 0.08)'
+              : 'rgba(24, 144, 255, 0.06)',
+            borderRadius: '8px',
+            borderLeft: `4px solid ${primaryColor}`,
+            textAlign: 'center',
+          }}
+        >
+          <InfoCircleOutlined
+            style={{
+              fontSize: 28,
+              color: primaryColor,
+              marginBottom: 12,
+              display: 'block',
+            }}
+          />
+          <Typography.Text style={{ color: '#888', fontSize: 14 }}>
+            * Please go to a specific node page for transaction details.
+          </Typography.Text>
+        </div>
+      </div>
     );
   }
 

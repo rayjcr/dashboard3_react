@@ -8,7 +8,7 @@ export const useThemeStore = create<ThemeState>()(
   devtools(
     persist(
       (set) => ({
-        currentTheme: 'light' as ThemeMode,
+        currentTheme: 'dark' as ThemeMode,
 
         setTheme: (theme: ThemeMode) => {
           set({ currentTheme: theme });

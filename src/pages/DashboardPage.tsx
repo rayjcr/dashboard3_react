@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Card, Typography, Space, Tabs, Empty, App } from 'antd';
+import { Card, Typography, Space, Tabs, App } from 'antd';
 import {
   ShopOutlined,
   ApartmentOutlined,
@@ -18,7 +18,6 @@ import {
   AlipayCircleOutlined,
   DollarOutlined,
   SafetyOutlined,
-  ApiOutlined,
 } from '@ant-design/icons';
 import {
   useUIStore,
@@ -35,16 +34,14 @@ import { cancelTransactionLookupRequests } from '@/stores/transactionLookupStore
 import { cancelMultiFundingsRequests } from '@/stores/multiFundingsStore';
 import { cancelReserveSummaryRequests } from '@/stores/reserveSummaryStore';
 import {
-  DailySummaryTable,
-  MonthlySummaryTable,
-  DailySettleSummaryTable,
-  DateFilter,
-  DownloadButtons,
   TransactionLookup,
   DisputeSummary,
   AliDirectSettlement,
   MultiFundings,
   ReserveSummary,
+  DailySummaryTabContent,
+  MonthlySummaryTabContent,
+  DailySettleSummaryTabContent,
 } from '@/components/dashboard';
 import { parseUserConfig } from '@/types/dashboard';
 import { summaryApi } from '@/services/api/summaryApi';
@@ -61,20 +58,6 @@ import type { Dayjs } from 'dayjs';
 import debounce from 'lodash/debounce';
 
 const { Text } = Typography;
-
-// Placeholder component for unimplemented features
-const ComingSoon: React.FC<{ title: string }> = ({ title }) => (
-  <Empty
-    description={
-      <span>
-        <Text strong>{title}</Text>
-        <br />
-        <Text type="secondary">Coming Soon</Text>
-      </span>
-    }
-    style={{ padding: '40px 0' }}
-  />
-);
 
 export const DashboardPage: React.FC = () => {
   const location = useLocation();
@@ -430,7 +413,8 @@ export const DashboardPage: React.FC = () => {
     monthlyPageSize,
     dailySettlePageSize,
     setActiveTab,
-    searchParams,
+    // Note: searchParams removed from deps - not used inside this effect
+    // and was causing duplicate API calls on mobile when URL params changed
   ]);
 
   // Internal tab change handler - performs the actual data loading
@@ -867,303 +851,224 @@ export const DashboardPage: React.FC = () => {
     return false;
   }, [monthlySummary, isLeafNode]);
 
-  // Filter tabs based on user config and node properties
-  const tabItems = useMemo(() => {
-    // Tab items with icons
-    const allTabItems = [
-      {
-        key: 'daily',
-        label: (
-          <span>
-            <CalendarOutlined style={{ marginRight: 6 }} />
-            Daily Summary
-          </span>
-        ),
-        children: (
-          <>
-            {shouldShowDailySummaryContent && (
-              <DateFilter
-                type="daily"
-                value={dailyDate}
-                onChange={setDailyDate}
-                onSearch={handleDailySearch}
-                loading={dailySummaryLoading}
-              />
-            )}
-            <DailySummaryTable
-              data={dailySummary}
-              loading={dailySummaryLoading}
-              error={dailySummaryError}
-              page={dailyPage}
-              pageSize={dailyPageSize}
-              onPageChange={handleDailyPageChange}
-              onPageSizeChange={handleDailyPageSizeChange}
-              merchantId={isLeafNode ? selectedNode?.merchantId : undefined}
-            />
-            <DownloadButtons
-              hasData={
-                Boolean(dailySummary?.transactions?.length) &&
-                shouldShowDailySummaryContent
-              }
-              onDownloadCSV={handleDailyCSVDownload}
-              downloadingCSV={downloadingDailyCSV}
-              onDownloadPDF={handleDailyPDFDownload}
-              downloadingPDF={downloadingDailyPDF}
-            />
-          </>
-        ),
-      },
-      {
-        key: 'monthly',
-        label: (
-          <span>
-            <BarChartOutlined style={{ marginRight: 6 }} />
-            Monthly Summary
-          </span>
-        ),
-        children: (
-          <>
-            {shouldShowMonthlySummaryContent && (
-              <DateFilter
-                type="monthly"
-                value={monthlyDate}
-                onChange={setMonthlyDate}
-                onSearch={handleMonthlySearch}
-                loading={monthlySummaryLoading}
-              />
-            )}
-            <MonthlySummaryTable
-              data={monthlySummary}
-              loading={monthlySummaryLoading}
-              error={monthlySummaryError}
-              page={monthlyPage}
-              pageSize={monthlyPageSize}
-              onPageChange={handleMonthlyPageChange}
-              onPageSizeChange={handleMonthlyPageSizeChange}
-              merchantId={isLeafNode ? selectedNode?.merchantId : undefined}
-            />
-            <DownloadButtons
-              hasData={
-                Boolean(monthlySummary?.transactions?.length) &&
-                shouldShowMonthlySummaryContent
-              }
-              onDownloadCSV={handleMonthlyCSVDownload}
-              downloadingCSV={downloadingMonthlyCSV}
-              onDownloadPDF={handleMonthlyPDFDownload}
-              downloadingPDF={downloadingMonthlyPDF}
-            />
-          </>
-        ),
-      },
-      {
-        key: 'transaction',
-        label: (
-          <span>
-            <SearchOutlined style={{ marginRight: 6 }} />
-            Transaction Lookup
-          </span>
-        ),
-        children: <TransactionLookup refreshKey={lookupRefreshKey} />,
-      },
-      {
-        key: 'settle',
-        label: (
-          <span>
-            <BankOutlined style={{ marginRight: 6 }} />
-            Daily Settle Summary
-          </span>
-        ),
-        children: (
-          <>
-            <DateFilter
-              type="daily"
-              value={dailySettleDate}
-              onChange={setDailySettleDate}
-              onSearch={handleDailySettleSearch}
-              loading={dailySettleSummaryLoading}
-            />
-            <DailySettleSummaryTable
-              data={dailySettleSummary}
-              loading={dailySettleSummaryLoading}
-              error={dailySettleSummaryError}
-              page={dailySettlePage}
-              pageSize={dailySettlePageSize}
-              onPageChange={handleDailySettlePageChange}
-              onPageSizeChange={handleDailySettlePageSizeChange}
-              showMethodColumn={showMethodColumn}
-              merchantId={selectedNode?.merchantId}
-            />
-            <DownloadButtons
-              hasData={Boolean(dailySettleSummary?.transactions?.length)}
-              onDownloadCSV={handleDailySettleCSVDownload}
-              downloadingCSV={downloadingDailySettleCSV}
-              onDownloadPDF={handleDailySettlePDFDownload}
-              downloadingPDF={downloadingDailySettlePDF}
-            />
-          </>
-        ),
-      },
-      {
-        key: 'dispute',
-        label: (
-          <span>
-            <ExclamationCircleOutlined style={{ marginRight: 6 }} />
-            Dispute Summary
-          </span>
-        ),
-        children: <DisputeSummary key={disputeRefreshKey} />,
-      },
-      {
-        key: 'alipay',
-        label: (
-          <span>
-            <AlipayCircleOutlined style={{ marginRight: 6 }} />
-            Alipay Direct Settlement
-          </span>
-        ),
-        children: <AliDirectSettlement key={alipayRefreshKey} />,
-      },
-      {
-        key: 'multiFundings',
-        label: (
-          <span>
-            <DollarOutlined style={{ marginRight: 6 }} />
-            Multi Fundings
-          </span>
-        ),
-        children: <MultiFundings refreshKey={multiFundingsRefreshKey} />,
-      },
-      {
-        key: 'reserve',
-        label: (
-          <span>
-            <SafetyOutlined style={{ marginRight: 6 }} />
-            Reserve Summary
-          </span>
-        ),
-        children: <ReserveSummary refreshKey={reserveRefreshKey} />,
-      },
-      {
-        key: 'smartGateway',
-        label: (
-          <span>
-            <ApiOutlined style={{ marginRight: 6 }} />
-            Smart Gateway
-          </span>
-        ),
-        children: <ComingSoon title="Smart Gateway" />,
-      },
-    ];
+  // Filter visible tab keys based on user config and node properties
+  // Only 4 dependencies - recomputes only when tab visibility conditions change
+  const visibleTabKeys = useMemo(() => {
+    const keys: string[] = [];
 
-    return allTabItems.filter((tab) => {
-      switch (tab.key) {
-        case 'daily':
-          // Shown by default, hidden when: userConfig.daily_summary_disable === true
-          return userConfig.daily_summary_disable !== true;
+    // Daily: Shown by default, hidden when: userConfig.daily_summary_disable === true
+    if (userConfig.daily_summary_disable !== true) keys.push('daily');
 
-        case 'monthly':
-          // Shown by default, hidden when: userConfig.monthly_summary_disable === true
-          return userConfig.monthly_summary_disable !== true;
+    // Monthly: Shown by default, hidden when: userConfig.monthly_summary_disable === true
+    if (userConfig.monthly_summary_disable !== true) keys.push('monthly');
 
-        case 'transaction':
-          // Shown by default, hidden when: merchantId is empty or userConfig.transactions_lookup_disable === true
-          if (!selectedNode?.merchantId) return false;
-          return userConfig.transactions_lookup_disable !== true;
+    // Transaction: Shown by default, hidden when: merchantId is empty or userConfig.transactions_lookup_disable === true
+    if (
+      selectedNode?.merchantId &&
+      userConfig.transactions_lookup_disable !== true
+    )
+      keys.push('transaction');
 
-        case 'settle':
-          // Hidden when: merchantId is empty
-          return Boolean(selectedNode?.merchantId);
+    // Settle: Hidden when: merchantId is empty
+    if (selectedNode?.merchantId) keys.push('settle');
 
-        case 'dispute':
-          // Display conditions:
-          // 1. Node must have merchantId bound
-          // 2. userConfig.daily_dispute_summary_disable === false AND hasDisputeChild === true
-          // 3. OR userConfig.dispute_manage === true
-          if (!selectedNode?.merchantId) return false;
-          if (userConfig.dispute_manage === true) return true;
-          if (
-            userConfig.daily_dispute_summary_disable === false &&
-            hasDisputeChild
-          )
-            return true;
-          return false;
-
-        case 'alipay':
-          // Display condition: node's hasAliDirect property is not empty and not 0
-          return Boolean(selectedNode?.hasAliDirect);
-
-        case 'multiFundings':
-          // Display condition: node's hasMultiFundings property is not empty and not 0
-          return Boolean(selectedNode?.hasMultiFundings);
-
-        case 'reserve':
-          // Display condition: userConfig.reserve_summary_disable === false AND hasReserve === true
-          if (userConfig.reserve_summary_disable === false && hasReserve)
-            return true;
-          return false;
-
-        case 'smartGateway':
-          // Temporarily hidden for all users
-          return false;
-
-        default:
-          return true;
+    // Dispute: Display conditions:
+    // 1. Node must have merchantId bound
+    // 2. userConfig.daily_dispute_summary_disable === false AND hasDisputeChild === true
+    // 3. OR userConfig.dispute_manage === true
+    if (selectedNode?.merchantId) {
+      if (userConfig.dispute_manage === true) {
+        keys.push('dispute');
+      } else if (
+        userConfig.daily_dispute_summary_disable === false &&
+        hasDisputeChild
+      ) {
+        keys.push('dispute');
       }
-    });
-  }, [
-    userConfig,
-    selectedNode,
-    hasDisputeChild,
-    hasReserve,
-    dailyDate,
-    dailySummary,
-    dailySummaryLoading,
-    dailySummaryError,
-    dailyPage,
-    dailyPageSize,
-    handleDailyPageChange,
-    handleDailyPageSizeChange,
-    handleDailySearch,
-    handleDailyCSVDownload,
-    handleDailyPDFDownload,
-    downloadingDailyCSV,
-    downloadingDailyPDF,
-    isLeafNode,
-    monthlyDate,
-    monthlySummary,
-    monthlySummaryLoading,
-    monthlySummaryError,
-    monthlyPage,
-    monthlyPageSize,
-    handleMonthlyPageChange,
-    handleMonthlyPageSizeChange,
-    handleMonthlySearch,
-    handleMonthlyCSVDownload,
-    handleMonthlyPDFDownload,
-    downloadingMonthlyCSV,
-    downloadingMonthlyPDF,
-    lookupRefreshKey,
-    dailySettleDate,
-    dailySettleSummary,
-    dailySettleSummaryLoading,
-    dailySettleSummaryError,
-    dailySettlePage,
-    dailySettlePageSize,
-    handleDailySettlePageChange,
-    handleDailySettlePageSizeChange,
-    handleDailySettleSearch,
-    handleDailySettleCSVDownload,
-    handleDailySettlePDFDownload,
-    downloadingDailySettleCSV,
-    downloadingDailySettlePDF,
-    showMethodColumn,
-    disputeRefreshKey,
-    alipayRefreshKey,
-    multiFundingsRefreshKey,
-    reserveRefreshKey,
-    shouldShowDailySummaryContent,
-    shouldShowMonthlySummaryContent,
-  ]);
+    }
+
+    // Alipay: node's hasAliDirect property is not empty and not 0
+    if (selectedNode?.hasAliDirect) keys.push('alipay');
+
+    // MultiFundings: node's hasMultiFundings property is not empty and not 0
+    if (selectedNode?.hasMultiFundings) keys.push('multiFundings');
+
+    // Reserve: userConfig.reserve_summary_disable === false AND hasReserve === true
+    if (userConfig.reserve_summary_disable === false && hasReserve)
+      keys.push('reserve');
+
+    return keys;
+  }, [userConfig, selectedNode, hasDisputeChild, hasReserve]);
+
+  // Build tab items from visible keys
+  // Children use React.memo components - only re-render when their specific props change
+  const tabItems = visibleTabKeys
+    .map((key) => {
+      switch (key) {
+        case 'daily':
+          console.log(
+            shouldShowDailySummaryContent,
+            'shouldShowDailySummaryContent',
+          );
+          console.log(dailyDate, 'dailyDate');
+          console.log(setDailyDate, 'setDailyDate');
+          console.log(handleDailySearch, 'handleDailySearch');
+          console.log(dailySummary, 'dailySummary');
+          console.log(dailySummaryLoading, 'dailySummaryLoading');
+          console.log(dailySummaryError, 'dailySummaryError');
+          console.log(dailyPage, 'dailyPage');
+          console.log(dailyPageSize, 'dailyPageSize');
+          console.log(isLeafNode, selectedNode, 'selectedNode');
+
+          return {
+            key,
+            label: (
+              <span>
+                <CalendarOutlined style={{ marginRight: 6 }} />
+                Daily Summary
+              </span>
+            ),
+            children: (
+              <DailySummaryTabContent
+                shouldShowContent={shouldShowDailySummaryContent}
+                date={dailyDate}
+                onDateChange={setDailyDate}
+                onSearch={handleDailySearch}
+                data={dailySummary}
+                loading={dailySummaryLoading}
+                error={dailySummaryError}
+                page={dailyPage}
+                pageSize={dailyPageSize}
+                onPageChange={handleDailyPageChange}
+                onPageSizeChange={handleDailyPageSizeChange}
+                merchantId={isLeafNode ? selectedNode?.merchantId : undefined}
+                onDownloadCSV={handleDailyCSVDownload}
+                downloadingCSV={downloadingDailyCSV}
+                onDownloadPDF={handleDailyPDFDownload}
+                downloadingPDF={downloadingDailyPDF}
+              />
+            ),
+          };
+        case 'monthly':
+          return {
+            key,
+            label: (
+              <span>
+                <BarChartOutlined style={{ marginRight: 6 }} />
+                Monthly Summary
+              </span>
+            ),
+            children: (
+              <MonthlySummaryTabContent
+                shouldShowContent={shouldShowMonthlySummaryContent}
+                date={monthlyDate}
+                onDateChange={setMonthlyDate}
+                onSearch={handleMonthlySearch}
+                data={monthlySummary}
+                loading={monthlySummaryLoading}
+                error={monthlySummaryError}
+                page={monthlyPage}
+                pageSize={monthlyPageSize}
+                onPageChange={handleMonthlyPageChange}
+                onPageSizeChange={handleMonthlyPageSizeChange}
+                merchantId={isLeafNode ? selectedNode?.merchantId : undefined}
+                onDownloadCSV={handleMonthlyCSVDownload}
+                downloadingCSV={downloadingMonthlyCSV}
+                onDownloadPDF={handleMonthlyPDFDownload}
+                downloadingPDF={downloadingMonthlyPDF}
+              />
+            ),
+          };
+        case 'transaction':
+          return {
+            key,
+            label: (
+              <span>
+                <SearchOutlined style={{ marginRight: 6 }} />
+                Transaction Lookup
+              </span>
+            ),
+            children: <TransactionLookup refreshKey={lookupRefreshKey} />,
+          };
+        case 'settle':
+          return {
+            key,
+            label: (
+              <span>
+                <BankOutlined style={{ marginRight: 6 }} />
+                Daily Settle Summary
+              </span>
+            ),
+            children: (
+              <DailySettleSummaryTabContent
+                date={dailySettleDate}
+                onDateChange={setDailySettleDate}
+                onSearch={handleDailySettleSearch}
+                data={dailySettleSummary}
+                loading={dailySettleSummaryLoading}
+                error={dailySettleSummaryError}
+                page={dailySettlePage}
+                pageSize={dailySettlePageSize}
+                onPageChange={handleDailySettlePageChange}
+                onPageSizeChange={handleDailySettlePageSizeChange}
+                showMethodColumn={showMethodColumn}
+                merchantId={selectedNode?.merchantId}
+                onDownloadCSV={handleDailySettleCSVDownload}
+                downloadingCSV={downloadingDailySettleCSV}
+                onDownloadPDF={handleDailySettlePDFDownload}
+                downloadingPDF={downloadingDailySettlePDF}
+              />
+            ),
+          };
+        case 'dispute':
+          return {
+            key,
+            label: (
+              <span>
+                <ExclamationCircleOutlined style={{ marginRight: 6 }} />
+                Dispute Summary
+              </span>
+            ),
+            children: <DisputeSummary key={disputeRefreshKey} />,
+          };
+        case 'alipay':
+          return {
+            key,
+            label: (
+              <span>
+                <AlipayCircleOutlined style={{ marginRight: 6 }} />
+                Alipay Direct Settlement
+              </span>
+            ),
+            children: <AliDirectSettlement key={alipayRefreshKey} />,
+          };
+        case 'multiFundings':
+          return {
+            key,
+            label: (
+              <span>
+                <DollarOutlined style={{ marginRight: 6 }} />
+                Multi Fundings
+              </span>
+            ),
+            children: <MultiFundings refreshKey={multiFundingsRefreshKey} />,
+          };
+        case 'reserve':
+          return {
+            key,
+            label: (
+              <span>
+                <SafetyOutlined style={{ marginRight: 6 }} />
+                Reserve Summary
+              </span>
+            ),
+            children: <ReserveSummary refreshKey={reserveRefreshKey} />,
+          };
+        default:
+          return null;
+      }
+    })
+    .filter((item): item is NonNullable<typeof item> => item != null);
 
   return (
     <div className="dashboard-page">

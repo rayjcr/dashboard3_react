@@ -3,7 +3,6 @@ import { Typography, Input, Button, Card, Space, Alert, Form } from 'antd';
 import 'react-phone-number-input/style.css';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import { authApi } from '@/services/api/authApi';
-import { useAuthStore } from '@/stores';
 import './ChangePhoneForm.css';
 
 const { Title, Text } = Typography;
@@ -15,7 +14,6 @@ interface ChangePhoneFormProps {
 }
 
 export const ChangePhoneForm: React.FC<ChangePhoneFormProps> = ({ onBack }) => {
-  const { logout } = useAuthStore();
   const [form] = Form.useForm();
 
   const [stage, setStage] = useState<Stage>('input');
@@ -28,9 +26,11 @@ export const ChangePhoneForm: React.FC<ChangePhoneFormProps> = ({ onBack }) => {
   // Schedule logout after delay
   const scheduleLogout = useCallback(() => {
     setTimeout(() => {
-      logout();
+      // Don't call logout() here - let LogoutPage handle the full logout flow
+      // Use window.location.href to force redirect
+      window.location.href = '/logout?reason=manual';
     }, 3000);
-  }, [logout]);
+  }, []);
 
   // Reset forms
   const resetForms = useCallback(() => {

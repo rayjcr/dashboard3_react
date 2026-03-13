@@ -43,7 +43,7 @@ export const CURRENCY_SYMBOLS: Record<string, string> = {
  * Amount stored in database remains as-is, no division needed
  * eg. KRW 199 in DB is 199 KRW
  */
-const NO_DECIMAL_CURRENCIES = ['KRW', 'JPY', 'CLP', 'ISK'];
+const NO_DECIMAL_CURRENCIES = ['KRW', 'JPY', 'CLP', 'ISK', 'VND'];
 
 /**
  * Currency types with three decimal places

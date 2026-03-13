@@ -9,6 +9,9 @@ import type {
   ResendAuthCodeResponse,
   VerifyChangePhoneRequest,
   VerifyChangePhoneResponse,
+  SsoLoginRequest,
+  SsoLogoutRequest,
+  SsoLogoutResponse,
 } from '@/types/auth';
 
 export const authApi = {
@@ -21,10 +24,22 @@ export const authApi = {
   },
 
   /**
-   * Logout current user
+   * SSO OAuth login with authorization code
    */
-  async logout(): Promise<void> {
-    await apiClient.post('/auth/logout');
+  async ssoLogin(request: SsoLoginRequest): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>('/login', request);
+    return response.data;
+  },
+
+  /**
+   * SSO Logout - clears SSO session
+   */
+  async ssoLogout(request: SsoLogoutRequest): Promise<SsoLogoutResponse> {
+    const response = await apiClient.post<SsoLogoutResponse>(
+      '/logout',
+      request,
+    );
+    return response.data;
   },
 
   /**

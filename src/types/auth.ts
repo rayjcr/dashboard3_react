@@ -231,3 +231,41 @@ export interface VerifyChangePhoneResponse {
   /** Response data */
   data: VerifyChangePhoneResponseData;
 }
+
+/**
+ * Request for SSO OAuth login
+ */
+export interface SsoLoginRequest {
+  /** OAuth authorization code */
+  oauth_code: string;
+  /** Session state from SSO */
+  session_state: string;
+  /** Code challenge for PKCE */
+  code_challenge: string;
+  /** Issuer URL */
+  iss: string;
+}
+
+/**
+ * Request for SSO logout
+ */
+export interface SsoLogoutRequest {
+  /** User email */
+  email: string;
+  /** Current session ID */
+  sessionId: string;
+  /** Redirect URL after SSO logout */
+  redirect_url: string;
+}
+
+/**
+ * Response from SSO logout
+ */
+export interface SsoLogoutResponse {
+  /** Response code */
+  code: number;
+  /** Logout redirect URL (SSO provider logout page) */
+  data?: string;
+  /** Error message */
+  message?: string;
+}

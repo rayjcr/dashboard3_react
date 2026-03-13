@@ -29,6 +29,7 @@ import {
   getStatusTagColor,
   getStatusDisplayText,
 } from './utils';
+import { canWrite } from '@/config/featureFlags';
 import '../dashboard.css';
 
 const { Text } = Typography;
@@ -141,11 +142,14 @@ const DisputeSummaryTableInner: React.FC<
               <Button
                 type="primary"
                 size="small"
-                style={{
-                  backgroundColor: primaryColor,
-                  borderColor: primaryColor,
-                }}
+                style={
+                  canWrite() && {
+                    backgroundColor: primaryColor,
+                    borderColor: primaryColor,
+                  }
+                }
                 onClick={() => handleActionClick(record)}
+                disabled={!canWrite()}
               >
                 Action
               </Button>
